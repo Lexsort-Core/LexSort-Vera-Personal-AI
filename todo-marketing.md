@@ -38,8 +38,10 @@ Ensure the freeware sub-page ([website/freeware.html](freeware.html)) remains op
   - *100% Local*: "LexSort runs entirely on your device. No cloud. No data sharing."
   - *Audit-Ready*: "Verify our privacy. Our code is open source and transparent."
   - *Instant Boot*: "Built for performance—no loading, no waiting."
-- [x] **Feature Comparison (Soft-Sell for Pro)**
-  - Use a "Roadmap" section at the bottom to detail current free features vs. upcoming Pro modules (Auto Emailer, Guardian Watch, LexSort-GO Mobile) to build excitement.
+- [x] **Feature Comparison (Soft-Sell for Pro / Core)**
+  - Use a "Roadmap" section at the bottom to detail current free features vs. upcoming Pro add-ons and premium workstations:
+    - **VERA Pro**: Auto Emailer, Guardian Watch, LexSort-GO Mobile
+    - **LexSort Core**: Finance Module (Personal/Business Organizer) & Tax Module (Tax Prep & Credit Discovery)
 - [x] **Community Integration**
   - Link directly to Discord, Reddit, and X (@LexSortAI).
 

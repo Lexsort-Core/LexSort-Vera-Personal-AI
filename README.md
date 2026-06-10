@@ -25,9 +25,17 @@
 
 ## What is VERA?
 
-**VERA** is a private, local-first AI assistant built by [LexSort Inc.](https://lexsort.com)
+**VERA** is a private, local-first AI assistant built by [LexSort Inc.](https://lexsort.com) as the free open-source entry point to the LexSort local ecosystem.
 
 It runs **entirely on your own machine**. No account. No subscription. No data ever leaves your computer — not even a ping.
+
+### 💼 The LexSort Ecosystem
+VERA is our 100% free personal AI. For professional workflows, LexSort Inc. offers premium local-first desktop workstations:
+1. **LexSort Core (Financial & Tax Workstation)**:
+   - **LexSort Finance Module**: Personal & Business Organizer (local OCR receipt ingestion and file matching).
+   - **LexSort Tax Module**: Tax Preparation & Tax Credit Discovery Engine (CRA forms T2125, T776, T4, and Capital Cost Allowance).
+2. **LexSort Legal (Matter Intelligence Workstation)**:
+   - Criminal defence workflow, Crown disclosure, and client matching.
 
 We built VERA because we believe that AI tools for legal, financial, and personal use should be held to a higher standard of privacy. Cloud AI creates real liability when you paste confidential information. VERA eliminates that risk by design.
 
