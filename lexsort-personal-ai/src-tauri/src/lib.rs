@@ -1,6 +1,7 @@
 use tauri::{AppHandle, Emitter, State};
 use std::sync::Mutex;
 use std::process::{Child, Command};
+use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
 pub struct ServerProcess(pub Mutex<Option<Child>>);
@@ -67,6 +68,26 @@ fn select_model(ceiling_bytes: u64) -> ModelInfo {
     }
 }
 
+/// Resolve the absolute path to the ollama binary.
+/// When running as a bundled .app on macOS, the shell PATH is not
+/// inherited, so Command::new("ollama") fails with ENOENT.
+/// This function checks the common install locations in order.
+fn ollama_path() -> PathBuf {
+    let candidates = [
+        "/usr/local/bin/ollama",
+        "/opt/homebrew/bin/ollama",
+        "/usr/bin/ollama",
+    ];
+    for p in &candidates {
+        let path = PathBuf::from(p);
+        if path.exists() {
+            return path;
+        }
+    }
+    // Fallback: let the OS search PATH (works in dev mode)
+    PathBuf::from("ollama")
+}
+
 mod commands {
     use super::*;
 
@@ -108,7 +129,7 @@ mod commands {
         let model_exists = if model.id.is_empty() {
             false
         } else {
-            Command::new("ollama")
+            Command::new(ollama_path())
                 .args(["show", &model.id])
                 .output()
                 .map(|out| out.status.success())
@@ -137,7 +158,7 @@ mod commands {
         use futures_util::StreamExt;
 
         // Check if model already exists
-        let check = Command::new("ollama")
+        let check = Command::new(ollama_path())
             .args(["show", &model_id])
             .output();
         if let Ok(out) = check {
@@ -218,14 +239,14 @@ mod commands {
             return Ok("Server already running".to_string());
         }
         // Check if ollama is already running on port 11434
-        let check = Command::new("ollama")
+        let check = Command::new(ollama_path())
             .args(["list"])
             .output();
         if check.is_ok() {
             *guard = None; // ollama already running externally, don't manage it
             return Ok(format!("Ollama already running, using model {}", model_id));
         }
-        let child = Command::new("ollama")
+        let child = Command::new(ollama_path())
             .args(["serve"])
             .env("OLLAMA_HOST", format!("127.0.0.1:{}", port))
             .env("OLLAMA_ORIGINS", format!("http://127.0.0.1:{}", port))
