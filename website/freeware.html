@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Freeware Foundation — VERA by LexSort</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --canvas: #050709;
+      --surface: #0a0e14;
+      --surface-glass: rgba(10, 14, 20, 0.7);
+      --accent: #2e71c2;
+      --accent-glow: rgba(46, 113, 194, 0.15);
+      --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      --border: #1f2937;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.15);
+      --pro-gradient: linear-gradient(135deg, #a855f7 0%, #6b21a8 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--canvas);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Background Glow Effects */
+    .glow-bg {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 400px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Navigation Header */
+    header.nav-header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 7, 9, 0.8);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .logo-block img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #fff;
+      padding: 2px;
+    }
+
+    .logo-block span.brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+
+    .free-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--success-glow);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--success);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .hero h1 span.gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-tagline {
+      font-size: 20px;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 36px;
+      line-height: 1.5;
+    }
+
+    .cta-container {
+      margin-bottom: 16px;
+    }
+
+    .cta-btn {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      padding: 16px 36px;
+      font-size: 18px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(37, 99, 235, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(37, 99, 235, 0.6);
+    }
+
+    .cta-subtext {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Trust Markers "Why" Section */
+    .trust-section {
+      padding: 60px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 48px;
+      font-size: 16px;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .trust-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px 24px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .trust-card:hover {
+      transform: translateY(-4px);
+      border-color: #3b82f6;
+    }
+
+    .trust-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .trust-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .trust-card p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Comparison / Roadmap Section */
+    .comparison-section {
+      padding: 60px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 40px;
+    }
+
+    .comp-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .comp-box.pro-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--pro-gradient);
+    }
+
+    .comp-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .comp-badge.freeware {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+    }
+
+    .comp-badge.pro {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+    }
+
+    .comp-box h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .comp-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .feature-list {
+      list-style: none;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      color: var(--text-muted);
+    }
+
+    .feature-list li strong {
+      color: #fff;
+    }
+
+    .feature-list li .bullet {
+      color: #3b82f6;
+      font-weight: bold;
+    }
+
+    .feature-list.pro-list li .bullet {
+      color: #a855f7;
+    }
+
+    /* Community Section */
+    .community-section {
+      padding: 80px 0;
+      background: radial-gradient(circle at center, rgba(46, 113, 194, 0.08) 0%, transparent 60%);
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .community-grid {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 36px;
+      flex-wrap: wrap;
+    }
+
+    .community-btn {
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .community-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    .btn-discord { background-color: #5865F2; }
+    .btn-reddit { background-color: #FF4500; }
+    .btn-x { background-color: #000000; border: 1px solid var(--border); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 60px 0 40px;
+      background: #020304;
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #fff;
+    }
+
+    .copyright {
+      color: var(--text-muted);
+      font-size: 13px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 24px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 40px; }
+      .trust-grid { grid-template-columns: 1fr; }
+      .comparison-grid { grid-template-columns: 1fr; }
+      .footer-grid { flex-direction: column; gap: 24px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background glow -->
+  <div class="glow-bg"></div>
+
+  <!-- Header -->
+  <header class="nav-header">
+    <div class="container nav-container">
+      <a href="index.html" class="logo-block">
+        <img src="vera-logo-site.jpg" alt="VERA" />
+        <span class="brand-name">VERA</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="faq.html">FAQ</a>
+        <a href="https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI" target="_blank">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="free-pill">🛡 Freeware Release V1.0</div>
+      <h1>Your AI. Your Computer.<br><span class="gradient-text">Owned Permanently.</span></h1>
+      <p class="hero-tagline">
+        The Sovereign Choice in local intelligence. Built for professional workflows where security and data privacy are not optional. No cloud, no subscription, no tracking.
+      </p>
+      <div class="cta-container">
+        <a href="https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases" class="cta-btn">
+          ⬇ Download LexSort V1.0 (Freeware)
+        </a>
+      </div>
+      <p class="cta-subtext">Apache 2.0 Open Source &nbsp;·&nbsp; For macOS, Windows, and Linux</p>
+    </div>
+  </section>
+
+  <!-- Why Section -->
+  <section class="trust-section">
+    <div class="container">
+      <h2 class="section-title">The Foundation of Trust</h2>
+      <p class="section-subtitle">Why we build local-first and share the source code with the world.</p>
+      
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-icon">🔒</div>
+          <h3>100% Local</h3>
+          <p>LexSort runs entirely on your device. Every token is computed locally. No remote servers, no cloud storage, and zero data sharing with third parties.</p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon">🔎</div>
+          <h3>Audit-Ready</h3>
+          <p>Verify our privacy claims. Our codebase is open source under Apache 2.0. Audit the network configurations, system calls, and code directly on GitHub.</p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon">⚡</div>
+          <h3>Instant Boot</h3>
+          <p>Built for raw performance. By bypassing remote servers, your queries initiate and stream instantly. No subscription queues, no latency spikes, no waiting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison & Roadmap Section -->
+  <section class="comparison-section">
+    <div class="container">
+      <h2 class="section-title">The Product Roadmap</h2>
+      <p class="section-subtitle">We believe in delivering a robust, complete free experience, while designing modules for upcoming power tiers.</p>
+      
+      <div class="comparison-grid">
+        <!-- Freeware -->
+        <div class="comp-box">
+          <span class="comp-badge freeware">VERA Freeware (V1.0)</span>
+          <h3>Complete Workspace</h3>
+          <p class="comp-desc">An unrestricted, private desktop environment with no usage tracking.</p>
+          <ul class="feature-list">
+            <li><span class="bullet">✓</span> <span><strong>Hardware Auto-Detection</strong>: Adjusts LLM size based on your RAM automatically.</span></li>
+            <li><span class="bullet">✓</span> <span><strong>Local Inference Engine</strong>: Executes locally using the Ollama HTTP API.</span></li>
+            <li><span class="bullet">✓</span> <span><strong>RAM-Only Memory</strong>: Conversations live in volatile memory and vanish on close.</span></li>
+            <li><span class="bullet">✓</span> <span><strong>Zero Telemetry</strong>: No crash reports, usage counters, or external calls.</span></li>
+            <li><span class="bullet">✓</span> <span><strong>Unrestricted Queries</strong>: No token limits or speed throttling.</span></li>
+          </ul>
+        </div>
+        
+        <!-- Pro -->
+        <div class="comp-box pro-box">
+          <span class="comp-badge pro">VERA Pro Roadmap</span>
+          <h3>Enterprise Extensions</h3>
+          <p class="comp-desc">Advanced background agents and integration modules scheduled for Q4 2026.</p>
+          <ul class="feature-list pro-list">
+            <li><span class="bullet">⏳</span> <span><strong>Auto Emailer Module</strong>: Automatic, secure drafted replies for local inbox clients (Tested & Ready).</span></li>
+            <li><span class="bullet">⏳</span> <span><strong>Guardian Watch</strong>: Background process to securely monitor local folders and document folders.</span></li>
+            <li><span class="bullet">⏳</span> <span><strong>LexSort-GO Mobile</strong>: Companion mobile application with peer-to-peer sync.</span></li>
+            <li><span class="bullet">⏳</span> <span><strong>iMessage & Email Ingestion</strong>: Connect local notifications to summarize context.</span></li>
+            <li><span class="bullet">⏳</span> <span><strong>Encrypted Database</strong>: Optional local chat archives, secured with zero-knowledge keys.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Community Section -->
+  <section class="community-section">
+    <div class="container">
+      <h2 class="section-title">Join the Sovereign Conversation</h2>
+      <p class="section-subtitle">We build in public. Chat with our development team, request features, and get troubleshooting support.</p>
+      
+      <div class="community-grid">
+        <a href="https://discord.gg/kpZ3hWyAaq" target="_blank" class="community-btn btn-discord">
+          <svg style="width:20px;height:20px;fill:currentColor;" viewBox="0 0 127.14 96.36"><path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.43-5c.86-.63,1.7-1.29,2.5-2a75.76,75.76,0,0,0,72.76,0c.8.69,1.64,1.35,2.5,2a68.43,68.43,0,0,1-10.43,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31.58-18.83C129,54.65,123.5,31.58,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/></svg>
+          Discord Community
+        </a>
+        <a href="https://www.reddit.com/user/LexSort/" target="_blank" class="community-btn btn-reddit">
+          <svg style="width:20px;height:20px;fill:currentColor;" viewBox="0 0 20 20"><path d="M17.17,9a2.22,2.22,0,0,0-2.25-2.2A2.18,2.18,0,0,0,13.6,7.49,11.08,11.08,0,0,0,10.05,6.9l.75-3.39,2.44.54a1.44,1.44,0,1,0,1.43-1.42,1.42,1.42,0,0,0-1.39,1.1L10.63,3.15a.36.36,0,0,0-.42.27L9.41,7A11,11,0,0,0,5.85,7.5,2.18,2.18,0,0,0,4.53,6.77,2.22,2.22,0,0,0,2.28,9,2.2,2.2,0,0,0,3.24,10.8a6,6,0,0,0,0,1c0,3.15,3,5.71,6.7,5.71s6.71-2.56,6.71-5.71a5.81,5.81,0,0,0-.05-1A2.18,2.18,0,0,0,17.17,9ZM6.42,11a1,1,0,1,1,1,1A1,1,0,0,1,6.42,11Zm6.56,2.83A4.54,4.54,0,0,1,9.71,15a4.56,4.56,0,0,1-3.28-1.22.37.37,0,1,1,.52-.52A3.83,3.83,0,0,0,9.71,14.3a3.81,3.81,0,0,0,2.75-1,.37.37,0,0,1,.52.52ZM12,12a1,1,0,1,1,1-1A1,1,0,0,1,12,12Z"/></svg>
+          r/LexSort Reddit
+        </a>
+        <a href="https://x.com/LexSortAI" target="_blank" class="community-btn btn-x">
+          <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          @LexSortAI
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <a href="index.html" class="logo-block">
+          <img src="vera-logo-site.jpg" alt="VERA" />
+          <span class="brand-name" style="color:#fff;">VERA</span>
+        </a>
+        <div class="footer-links">
+          <a href="tos.html">Terms of Service</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="faq.html">FAQ</a>
+          <a href="https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI" target="_blank">GitHub</a>
+        </div>
+      </div>
+      <div class="copyright">
+        &copy; 2026 LexSort Inc. All rights reserved. &nbsp;·&nbsp; Built with a commitment to individual data sovereignty.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
