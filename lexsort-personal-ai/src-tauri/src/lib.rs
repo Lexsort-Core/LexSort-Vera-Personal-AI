@@ -3,6 +3,7 @@ use std::sync::Mutex;
 use std::process::{Child, Command};
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
+use sysinfo::{System, SystemExt, CpuExt};
 
 pub struct ServerProcess(pub Mutex<Option<Child>>);
 
@@ -68,24 +69,41 @@ fn select_model(ceiling_bytes: u64) -> ModelInfo {
     }
 }
 
-/// Resolve the absolute path to the ollama binary.
-/// When running as a bundled .app on macOS, the shell PATH is not
-/// inherited, so Command::new("ollama") fails with ENOENT.
-/// This function checks the common install locations in order.
+/// Resolve the absolute path to the ollama binary in a cross-platform way.
 fn ollama_path() -> PathBuf {
-    let candidates = [
-        "/usr/local/bin/ollama",
-        "/opt/homebrew/bin/ollama",
-        "/usr/bin/ollama",
-    ];
-    for p in &candidates {
-        let path = PathBuf::from(p);
-        if path.exists() {
-            return path;
+    #[cfg(target_os = "windows")]
+    {
+        if let Ok(local_app_data) = std::env::var("LOCALAPPDATA") {
+            let p = PathBuf::from(local_app_data).join("Programs").join("Ollama").join("ollama.exe");
+            if p.exists() {
+                return p;
+            }
         }
+        if let Ok(program_files) = std::env::var("ProgramFiles") {
+            let p = PathBuf::from(program_files).join("Ollama").join("ollama.exe");
+            if p.exists() {
+                return p;
+            }
+        }
+        PathBuf::from("ollama.exe")
     }
-    // Fallback: let the OS search PATH (works in dev mode)
-    PathBuf::from("ollama")
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        let candidates = [
+            "/usr/local/bin/ollama",
+            "/opt/homebrew/bin/ollama",
+            "/usr/bin/ollama",
+            "/bin/ollama",
+        ];
+        for p in &candidates {
+            let path = PathBuf::from(p);
+            if path.exists() {
+                return path;
+            }
+        }
+        PathBuf::from("ollama")
+    }
 }
 
 mod commands {
@@ -95,32 +113,25 @@ mod commands {
     pub fn detect_hardware(_app: AppHandle) -> Result<HardwareInfo, String> {
         let platform = std::env::consts::OS.to_string();
 
-        let mem_output = Command::new("sysctl")
-            .args(["-n", "hw.memsize"])
-            .output()
-            .map_err(|e| e.to_string())?;
-        let total: u64 = String::from_utf8_lossy(&mem_output.stdout)
-            .trim().parse().unwrap_or(8 * 1024 * 1024 * 1024);
+        let mut sys = System::new_all();
+        sys.refresh_all();
 
-        let cores_output = Command::new("sysctl")
-            .args(["-n", "hw.ncpu"])
-            .output()
-            .map_err(|e| e.to_string())?;
-        let cores: u32 = String::from_utf8_lossy(&cores_output.stdout)
-            .trim().parse().unwrap_or(4);
+        let total = sys.total_memory();
+        let cores = sys.cpus().len() as u32;
 
-        let chip_output = Command::new("sysctl")
-            .args(["-n", "machdep.cpu.brand_string"])
-            .output();
-        let chip = match chip_output {
-            Ok(o) => {
-                let s = String::from_utf8_lossy(&o.stdout).trim().to_string();
-                if s.contains("Apple") { Some(s) } else { None }
-            }
-            Err(_) => None,
+        let cpu_brand = if !sys.cpus().is_empty() {
+            sys.cpus()[0].brand().trim().to_string()
+        } else {
+            "".to_string()
         };
 
-        let unified = chip.is_some();
+        let apple_chip = if platform == "macos" && cpu_brand.contains("Apple") {
+            Some(cpu_brand.clone())
+        } else {
+            None
+        };
+
+        let unified = apple_chip.is_some();
         let available = (total as f64 * 0.6) as u64;
         let ceiling = (available as f64 * 0.70) as u64;
         let ram_gb = (total as f64 / (1024.0 * 1024.0 * 1024.0) * 10.0).round() / 10.0;
@@ -143,7 +154,7 @@ mod commands {
             available_memory_bytes: available,
             allocation_ceiling_bytes: ceiling,
             cpu_cores: cores,
-            apple_chip: chip,
+            apple_chip,
             unified_memory: unified,
             model,
             model_exists,
