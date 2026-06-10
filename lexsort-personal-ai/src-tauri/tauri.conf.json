@@ -1,7 +1,7 @@
 {
   "productName": "LexSort Personal AI",
   "version": "0.1.0",
-  "identifier": "com.lexsort.app",
+  "identifier": "com.lexsort.vera",
   "build": {
     "devUrl": "http://localhost:1420",
     "frontendDist": "../dist",
