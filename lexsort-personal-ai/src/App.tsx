@@ -90,7 +90,7 @@ export default function App() {
 
       // 2. Start inference server (ensures Ollama is active on the local port)
       setPhase(PHASE.BOOTING);
-      await invoke("start_inference_server", { model_id: hw.model.id });
+      await invoke("start_inference_server", { modelId: hw.model.id });
 
       // Give the server a moment to bind before the UI hits it
       await delay(1000);
@@ -105,7 +105,7 @@ export default function App() {
         unlistenRef.current = unlistenProgress;
 
         try {
-          await invoke("download_model", { model_id: hw.model.id });
+          await invoke("download_model", { modelId: hw.model.id });
         } finally {
           unlistenProgress();
           unlistenRef.current = null;
