@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use std::process::{Child, Command};
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
-use sysinfo::{System, SystemExt, CpuExt};
+use sysinfo::System;
 
 pub struct ServerProcess(pub Mutex<Option<Child>>);
 
