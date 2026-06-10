@@ -1,0 +1,10 @@
+@import "./app.css";
+
+:root {
+  --canvas: #080a0c;
+  --text-primary: #e6edf3;
+  --accent: #5B4FD4;
+}
+body { background-color: var(--canvas); color: var(--text-primary); margin: 0; padding: 20px; font-family: sans-serif; }
+.app-container { display: flex; align-items: center; justify-content: center; height: 100vh; }
+button { background: var(--accent); color: white; padding: 15px 30px; border: none; border-radius: 8px; cursor: pointer; }

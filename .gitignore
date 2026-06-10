@@ -1,0 +1,68 @@
+# Binaries and build artifacts
+target/
+dist/
+build/
+*.app
+*.dmg
+*.pkg
+*.exe
+*.msi
+*.deb
+*.rpm
+
+# Node
+node_modules/
+.npm
+npm-debug.log*
+
+# Vite
+.vite/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V7
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# Rust / Cargo
+lexsort-personal-ai/src-tauri/target/
+Cargo.lock
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Tauri generated files
+lexsort-personal-ai/src-tauri/gen/
+
+# Logs
+*.log
+logs/
+
+# Local AI model weights (too large for Git)
+*.gguf
+*.bin
+*.safetensors
+
+# Sidecar binaries (platform-specific)
+sidecar/*.exe
+sidecar/*.dylib
+sidecar/*.so
+
+# Scratch / temp files
+scratch/
+*.tmp
+
+# Netlify
+.netlify/
