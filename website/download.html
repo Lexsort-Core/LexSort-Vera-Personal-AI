@@ -728,6 +728,15 @@
       const userAgent = window.navigator.userAgent.toLowerCase();
       const platform = window.navigator.platform.toLowerCase();
       
+      // Check for mobile first
+      const isMobile = /iphone|ipad|ipod|android|webos|blackberry|iemobile|opera mini/i.test(userAgent) || 
+                       (userAgent.indexOf("mac") !== -1 && window.navigator.maxTouchPoints > 1);
+
+      if (isMobile) {
+        const isAndroid = userAgent.indexOf("android") !== -1;
+        return { os: "mobile", isAndroid, isAppleSilicon: false };
+      }
+
       // Default fallback is Windows
       let os = "windows";
       let isAppleSilicon = false;
@@ -784,7 +793,12 @@
           let recommendation = "";
           let downloadLink = "";
 
-          if (clientInfo.os === "mac") {
+          if (clientInfo.os === "mobile") {
+            div.textContent = "[NOTICE] OS: Mobile (" + (clientInfo.isAndroid ? "Android" : "iOS") + "). VERA runs locally on desktop hardware. Desktop PC recommended.";
+            div.style.color = '#f59e0b'; // warning orange
+            recommendation = "mobile";
+            downloadLink = "#";
+          } else if (clientInfo.os === "mac") {
             if (clientInfo.isAppleSilicon) {
               div.textContent = "[SUCCESS] OS: macOS (Apple Silicon). CPU Architecture: ARM64. Memory: Unified Memory Map. Recommended: VERA macOS Apple Silicon (.dmg)";
               recommendation = "mac-silicon";
@@ -823,8 +837,26 @@
       const btn = document.getElementById('detected-download-btn');
       
       btn.href = downloadLink;
+      btn.style.background = "var(--accent-gradient)";
+      btn.style.boxShadow = "0 4px 24px rgba(37, 99, 235, 0.4)";
+      btn.innerHTML = "⬇ Download VERA Freeware";
+      
+      badge.style.color = "#60a5fa";
+      badge.style.backgroundColor = "rgba(59, 130, 246, 0.15)";
+      badge.style.borderColor = "rgba(59, 130, 246, 0.3)";
 
-      if (recommendation === "mac-silicon") {
+      if (recommendation === "mobile") {
+        badge.innerHTML = "📱 Mobile Browser Detected";
+        badge.style.color = "var(--warning)";
+        badge.style.backgroundColor = "var(--warning-glow)";
+        badge.style.borderColor = "rgba(245, 158, 11, 0.3)";
+        title.innerText = "VERA is a Desktop Application";
+        desc.innerText = "To protect your absolute privacy, VERA runs its AI models locally on your computer. Open this page on your macOS, Windows, or Linux PC to download and install.";
+        btn.innerHTML = "✉&nbsp; Email Link to My Computer";
+        btn.href = "mailto:?subject=Download%20VERA%20on%20your%20computer&body=Here%20is%20the%20link%20to%20download%20VERA%20Personal%20AI%20on%20your%20desktop%20computer%3A%20https%3A%2F%2Flexsort.com%2Fdownload.html";
+        btn.style.background = "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)";
+        btn.style.boxShadow = "0 4px 24px rgba(245, 158, 11, 0.4)";
+      } else if (recommendation === "mac-silicon") {
         badge.innerHTML = "🍏 macOS (Apple Silicon) Detected";
         title.innerText = "Download VERA for Mac (Apple Silicon)";
         desc.innerText = "Optimized for Apple M1, M2, M3, M4 systems. Fully self-contained local workspace installer.";
