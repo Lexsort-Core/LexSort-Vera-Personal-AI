@@ -7,6 +7,7 @@
 
   <p>
     <a href="https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases"><img src="https://img.shields.io/github/v/release/Lexsort-Core/LexSort-Vera-Personal-AI?color=2E5FA3&label=release&style=flat-square" alt="Release"></a>
+    <a href="https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/actions/workflows/release.yml"><img src="https://img.shields.io/github/actions/workflow/status/Lexsort-Core/LexSort-Vera-Personal-AI/release.yml?label=CI%2FCD%20Build&style=flat-square" alt="CI/CD Status"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-gold?style=flat-square" alt="License"></a>
     <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey?style=flat-square" alt="Platform">
     <img src="https://img.shields.io/badge/cloud-none-brightgreen?style=flat-square" alt="No Cloud">
@@ -77,9 +78,12 @@ Zero configuration required. VERA handles it automatically.
 
 Go to **[lexsort.com](https://lexsort.com)** and download the installer for your platform.
 
-- macOS (Apple Silicon + Intel)
-- Windows (coming soon)
-- Linux (coming soon)
+| Platform | Status |
+|---|---|
+| ✅ macOS Apple Silicon (arm64) | Available now |
+| ✅ macOS Intel (x86_64) | Available now |
+| 🔄 Windows (x64) | CI/CD build in progress — check [Releases](https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases) |
+| 🔄 Linux (deb / AppImage) | CI/CD build in progress — check [Releases](https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases) |
 
 ### Option 2 — Build from Source
 
@@ -115,20 +119,35 @@ npm run tauri build
 | **Inference** | [Ollama](https://ollama.com/) local HTTP API |
 | **Models** | Apache 2.0 licensed open-source LLMs |
 | **Build Tool** | Vite 7 |
+| **CI/CD** | GitHub Actions (matrix: macOS arm64 + x86_64, Windows x64, Linux Ubuntu) |
 
 ---
 
 ## 🗺 Roadmap
 
+### ✅ v1.0.0 — Freeware Foundation (Released June 2026)
 - [x] Hardware detection & auto model selection
 - [x] Local Ollama HTTP API streaming
 - [x] Persistent chat with ephemeral (RAM-only) memory
 - [x] Save transcript to local file
-- [ ] Windows & Linux installers
-- [ ] macOS Notarization & App Store release
+- [x] Cross-platform Rust backend (macOS, Windows, Linux)
+- [x] GitHub Actions CI/CD release pipeline (macOS Apple Silicon + Intel, Windows, Linux)
+- [x] VERA product page live at [lexsort.com](https://lexsort.com)
+
+### 🔄 In Progress
+- [ ] Windows & Linux installers published on GitHub Releases *(building now)*
+- [ ] macOS Notarization & App Store submission
+
+### 🗓 Upcoming — VERA Pro (Q4 2026)
 - [ ] Markdown rendering in chat
 - [ ] Conversation history (optional, local-only)
-- [ ] VERA Pro — Auto Emailer module
+- [ ] Auto Emailer module
+- [ ] Guardian Watch module
+- [ ] LexSort-GO Mobile companion app
+
+### 🗓 Upcoming — LexSort Core Add-Ons (Pro subscribers only)
+- [ ] **Finance Module** — Personal & Business Organizer with local OCR receipt ingestion
+- [ ] **Tax Module** — CRA Tax Preparation & Credit Discovery Engine (T2125, T776, T4, CCA)
 
 ---
 
@@ -170,5 +189,6 @@ Licensed under the [Apache License 2.0](LICENSE). Free to use, modify, and distr
 ---
 
 <div align="center">
-  <sub>Built by <a href="https://lexsort.com">LexSort Inc.</a> — The future of local-first intelligence.</sub>
+  <sub>Built by <a href="https://lexsort.com">LexSort Inc.</a> — The future of local-first intelligence.</sub><br>
+  <sub><em>Last updated: June 10, 2026 — v1.0.0 released. CI/CD pipeline active for all platforms.</em></sub>
 </div>

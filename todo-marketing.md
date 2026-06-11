@@ -1,12 +1,26 @@
 # LexSort Personal AI — Marketing & Community Checklist
+*Last Updated: June 10, 2026 — v1.0.0 Freeware Foundation released.*
 
 To market the LexSort Personal AI (VERA) and build a sovereign community, our strategy pivots from technical preparation to user acquisition. The goal is to position LexSort as the **"Sovereign Choice"** in an AI landscape currently dominated by data-hungry corporations.
 
 ---
 
-## 🎯 1. The Marketing Strategy: "Owned Permanently"
+## ✅ Phase 1 — Launch Foundation (COMPLETE)
 
-Develop marketing assets and messaging around the core philosophy: *You are the only one who truly owns your AI experience.*
+| Item | Status |
+|---|---|
+| VERA v1.0.0 Freeware released on GitHub | ✅ Done |
+| VERA product page live at lexsort.com/vera.html | ✅ Done |
+| Freeware Foundation page live at lexsort.com/freeware.html | ✅ Done |
+| Download page live at lexsort.com/download.html (all platforms listed) | ✅ Done |
+| VERA card added to corporate LexSort homepage | ✅ Done |
+| GitHub repository public: Lexsort-Core/LexSort-Vera-Personal-AI | ✅ Done |
+| CI/CD pipeline active: macOS (arm64 + x86_64), Windows, Linux | ✅ Building |
+| Discord, Reddit, X, YouTube, LinkedIn, TikTok, Instagram, Product Hunt linked | ✅ Done |
+
+---
+
+## 🎯 Phase 2 — Content & Community Marketing
 
 ### Content Pillars
 - [ ] **The "Anti-Corporate" Angle**
@@ -21,37 +35,49 @@ Develop marketing assets and messaging around the core philosophy: *You are the 
 
 ### Engagement Loops
 - [ ] **Beta Feedback Integration**
-  - Launch recruitment campaigns on Discord and Reddit to recruit "Founder" beta testers for the upcoming VERA Pro beta (scheduled for Q4 2026).
+  - Launch recruitment campaigns on Discord and Reddit to recruit "Founder" beta testers for the upcoming VERA Pro beta (scheduled Q4 2026).
 - [ ] **Roadmap Transparency**
-  - Regularly publish roadmap updates detailing the transition from V1.0 Freeware to Pro to keep the community invested in the product's evolution.
+  - Regularly publish roadmap updates detailing the transition from V1.0 Freeware → Pro to keep the community invested.
 
 ---
 
-## 🌐 2. LexSort.com Sub-Page: "The Freeware Foundation"
+## 🌐 Phase 3 — Conversion Optimization (lexsort.com)
 
-Ensure the freeware sub-page ([website/freeware.html](freeware.html)) remains optimized as the clear high-conversion entry point:
+The freeware sub-page ([website/freeware.html](freeware.html)) is already deployed. Keep it optimized:
 
-- [x] **Hero Section**
-  - *Headline*: "Your AI. Your Computer. Owned Permanently."
-  - *CTA*: Large, primary button linking to V1.0 releases.
-- [x] **The "Why" Section (Trust Markers)**
-  - *100% Local*: "LexSort runs entirely on your device. No cloud. No data sharing."
-  - *Audit-Ready*: "Verify our privacy. Our code is open source and transparent."
-  - *Instant Boot*: "Built for performance—no loading, no waiting."
-- [x] **Feature Comparison (Soft-Sell for Pro / Core)**
-  - Use a "Roadmap" section at the bottom to detail current free features vs. upcoming Pro add-ons and premium workstations:
-    - **VERA Pro**: Auto Emailer, Guardian Watch, LexSort-GO Mobile
-    - **LexSort Core**: Finance Module (Personal/Business Organizer) & Tax Module (Tax Prep & Credit Discovery)
-- [x] **Community Integration**
-  - Link directly to Discord, Reddit, and X (@LexSortAI).
+- [x] **Hero Section** — "Your AI. Your Computer. Owned Permanently." + CTA to releases
+- [x] **Trust Markers** — 100% Local / Audit-Ready / Instant Boot
+- [x] **Feature Comparison** — Current free features vs. upcoming Pro add-ons and Core workstations:
+  - **VERA Pro**: Auto Emailer, Guardian Watch, LexSort-GO Mobile
+  - **LexSort Core**: Finance Module (Personal/Business Organizer) & Tax Module (Tax Prep & Credit Discovery)
+- [x] **Community Integration** — Discord, Reddit, X (@LexSortAI) linked
 
 ---
 
-## 🚀 3. Execution Checklist
+## 🚀 Phase 4 — Execution Checklist
 
 - [ ] **Cross-Promotion Setup**
-  - Update the bio and links on the official X profile [@LexSortAI](https://x.com/LexSortAI) to point directly to the Freeware Foundation landing page.
-- [ ] **GitHub-First Growth Funnel**
-  - Configure community landing points to direct users to the [GitHub Releases page](https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases) for the V1.0 binary download.
+  - Update the bio and links on the official X profile [@LexSortAI](https://x.com/LexSortAI) to point to the Freeware Foundation landing page.
+- [ ] **GitHub-First Growth Funnel** *(CI/CD active — binaries available once build completes)*
+  - Confirm Windows and Linux binaries appear on [GitHub Releases](https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases).
+  - Update download.html platform links when all binaries are confirmed.
+- [ ] **Product Hunt Launch Post**
+  - Schedule a proper Product Hunt launch for VERA (aim for a Tuesday/Wednesday for max exposure).
 - [ ] **Community Recruiting Campaign**
-  - Post threads in r/LexSort and the Discord server asking for user feedback on the "Auto Emailer" module and the "Guardian Watch" roadmap features to drive early engagement.
+  - Post threads in r/LexSort and the Discord server asking for feedback on the "Auto Emailer" and "Guardian Watch" roadmap features.
+- [ ] **First YouTube Video / Demo**
+  - Record a screen-capture demo of VERA booting, detecting hardware, and pulling a local model — zero cloud, zero account.
+
+---
+
+## 🗓 VERA Pro — Planned Module Roadmap (Q4 2026)
+
+| Module | Type | Target |
+|---|---|---|
+| Auto Emailer | VERA Pro add-on | Draft & send emails locally via LLM |
+| Guardian Watch | VERA Pro add-on | Local system monitoring / alerts |
+| LexSort-GO Mobile | VERA Pro companion | iOS/Android companion app |
+| Finance Module | LexSort Core (Pro subscribers) | Personal & Business Organizer + OCR receipts |
+| Tax Module | LexSort Core (Pro subscribers) | CRA Tax Prep & Credit Discovery Engine |
+
+> **Pricing model:** LexSort Core subscription = **$5.99/month**. All add-ons are free for subscribers. The freeware VERA remains free forever — the Pro subscription unlocks the Core and advanced VERA modules.
