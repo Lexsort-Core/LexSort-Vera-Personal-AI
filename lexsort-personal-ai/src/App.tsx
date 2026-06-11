@@ -293,6 +293,14 @@ export default function App() {
     }
   };
 
+  const openFaqPage = async () => {
+    try {
+      await openUrl("https://lexsort.com/faq.html");
+    } catch {
+      window.open("https://lexsort.com/faq.html", "_blank");
+    }
+  };
+
   // ── Render: Loading phases ─────────────────────────────────────────────────
   if (phase !== PHASE.READY) {
     return (
@@ -352,10 +360,14 @@ export default function App() {
               </button>
             </div>
             <p style={{ marginTop: "20px", fontSize: "12px" }}>
-              Need help? Join the{" "}
+              Need help? Read our{" "}
+              <span onClick={openFaqPage} style={{ color: "var(--accent)", cursor: "pointer", textDecoration: "underline" }}>
+                Troubleshooting Guide
+              </span>
+              {" "}or join the{" "}
               <span onClick={openCommunityHub} style={{ color: "var(--accent)", cursor: "pointer", textDecoration: "underline" }}>
                 Discord Community
-              </span>
+              </span>.
             </p>
           </div>
         )}
@@ -375,6 +387,9 @@ export default function App() {
                 </button>
                 <button onClick={fileBugReport} className="diagnostic-btn diagnostic-btn-primary">
                   File Bug Report
+                </button>
+                <button onClick={openFaqPage} className="diagnostic-btn diagnostic-btn-secondary">
+                  Help FAQ
                 </button>
                 <button onClick={() => setShowDiagnostics(false)} className="diagnostic-btn diagnostic-btn-secondary" style={{ flex: "0 0 auto" }}>
                   Close
@@ -478,6 +493,9 @@ export default function App() {
               </button>
               <button onClick={fileBugReport} className="diagnostic-btn diagnostic-btn-primary">
                 File Bug Report
+              </button>
+              <button onClick={openFaqPage} className="diagnostic-btn diagnostic-btn-secondary">
+                Help FAQ
               </button>
               <button onClick={() => setShowDiagnostics(false)} className="diagnostic-btn diagnostic-btn-secondary" style={{ flex: "0 0 auto" }}>
                 Close

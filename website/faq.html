@@ -1,10 +1,691 @@
-<!DOCTYPE html><html><body style="font-family:sans-serif; max-width:800px; margin:40px auto; line-height:1.6; color:#1f2937;">
-<h1>FAQ</h1>
-<h3>Does this work offline?</h3>
-<p>Yes. LexSort is designed to be fully functional without an internet connection.</p>
-<h3>What are the system requirements?</h3>
-<p>LexSort utilizes your local machine's processor and RAM. Performance scales with your hardware; we recommend 16GB+ RAM for optimal speed.</p>
-<h3>What is the refund policy?</h3>
-<p>We offer a 7-day refund guarantee if you encounter technical incompatibilities.</p>
-<a href="index.html">← Back to Home</a>
-</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERA Support Hub & FAQ — LexSort</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --canvas: #050709;
+      --surface: #0a0e14;
+      --surface-glass: rgba(10, 14, 20, 0.75);
+      --accent: #2e71c2;
+      --accent-glow: rgba(46, 113, 194, 0.15);
+      --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      --border: #1f2937;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --warning-glow: rgba(245, 158, 11, 0.15);
+      --danger: #ef4444;
+      --danger-glow: rgba(239, 68, 68, 0.15);
+      --terminal-bg: #030507;
+      --terminal-border: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--canvas);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Background Glow Effects */
+    .glow-bg {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1000px;
+      height: 500px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Navigation Header */
+    header.nav-header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 7, 9, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .logo-block img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #fff;
+      padding: 2px;
+    }
+
+    .logo-block span.brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    /* Hero */
+    .support-hero {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+
+    .support-hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .support-hero h1 span.gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Grid Layout */
+    .support-grid {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      gap: 40px;
+      margin: 48px 0;
+      align-items: start;
+    }
+
+    /* Diagnostic Card */
+    .support-card {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .support-card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .support-card p.card-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .diag-textarea {
+      width: 100%;
+      height: 120px;
+      background: var(--terminal-bg);
+      border: 1px solid var(--terminal-border);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      padding: 12px;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 20px;
+    }
+
+    .diag-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    /* Parser Output Area */
+    .parser-output {
+      margin-top: 10px;
+      display: none;
+    }
+
+    .parser-output.active {
+      display: block;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .output-card {
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid transparent;
+      line-height: 1.5;
+    }
+
+    .output-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .output-card p {
+      font-size: 13px;
+    }
+
+    .output-card.success {
+      background: var(--success-glow);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #3fb950;
+    }
+
+    .output-card.warning {
+      background: var(--warning-glow);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+    }
+
+    .output-card.danger {
+      background: var(--danger-glow);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    .code-cmd {
+      background: #000;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .code-cmd button {
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .code-cmd button:hover {
+      opacity: 0.9;
+    }
+
+    /* FAQ List */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: border-color 0.2s;
+    }
+
+    .faq-item:hover {
+      border-color: var(--accent);
+    }
+
+    .faq-item h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .faq-item p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .faq-item ul, .faq-item ol {
+      margin-top: 10px;
+      margin-left: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .faq-item li {
+      margin-bottom: 8px;
+    }
+
+    .faq-item li strong {
+      color: #fff;
+    }
+
+    /* Community Bar */
+    .community-bar {
+      padding: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      text-align: center;
+      margin: 60px 0;
+    }
+
+    .community-bar h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .community-bar p {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+
+    .community-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .community-btn {
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .community-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    .btn-discord { background-color: #5865F2; }
+    .btn-reddit { background-color: #FF4500; }
+    .btn-github { background-color: #24292e; border: 1px solid var(--border); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      background: #020304;
+      text-align: center;
+    }
+
+    footer p {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .support-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── CORPORATE NAV BAR ────────────────────────────────────────────── -->
+  <div style="background:#080a0c;border-bottom:1px solid #21262d;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+    <a href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#7d8590;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <span style="font-weight:600;letter-spacing:.04em;">LexSort Inc.</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:6px;color:#7d8590;">
+      <a href="vera.html" style="color:#7d8590;text-decoration:none;font-weight:600;">VERA</a>
+      <span style="color:#21262d;">·</span>
+      <span style="color:#e6edf3;font-weight:700;letter-spacing:.04em;">Support Hub & FAQ</span>
+    </div>
+  </div>
+
+  <!-- Background glow -->
+  <div class="glow-bg"></div>
+
+  <!-- Header -->
+  <header class="nav-header">
+    <div class="container nav-container">
+      <a href="index.html" class="logo-block">
+        <img src="vera-logo-site.jpg" alt="VERA" />
+        <span class="brand-name">VERA</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="download.html">Download</a>
+        <a href="freeware.html">Freeware Foundation</a>
+        <a href="https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI" target="_blank">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="support-hero">
+    <div class="container">
+      <h1>VERA <span class="gradient-text">Support Center</span></h1>
+      <p class="subtitle">Get diagnostic solutions, install guidance, and community help for VERA.</p>
+    </div>
+  </section>
+
+  <!-- Support Content -->
+  <main class="container support-grid">
+    
+    <!-- Sidebar Diagnostic Tool -->
+    <div class="support-card">
+      <h2>Sovereign Diagnostic Parser</h2>
+      <p class="card-desc">If you run into an error during app launch, click <strong>Diagnostic Report</strong> in the app, copy it, and paste it here for an instant offline resolution.</p>
+      
+      <textarea id="diagInput" class="diag-textarea" placeholder="Paste VERA Diagnostic Report here..."></textarea>
+      
+      <div id="parserOutput" class="parser-output">
+        <div id="outputContainer"></div>
+      </div>
+    </div>
+
+    <!-- Right Side FAQ -->
+    <div class="faq-list">
+      
+      <!-- FAQ 1: macOS Damaged / Gatekeeper Bypass -->
+      <div class="faq-item" id="faq-gatekeeper">
+        <h3>🍏 macOS: "App is damaged" or "Unverified Developer"</h3>
+        <p>Because VERA runs as self-contained freeware without an Apple Developer subscription signature, macOS Gatekeeper may flag it. You can easily approve it:</p>
+        <ol>
+          <li>Instead of double-clicking the app, <strong>right-click (or Control-click)</strong> on <code>LexSort Personal AI.app</code> in your Applications folder and choose <strong>Open</strong>.</li>
+          <li>Click the <strong>Open</strong> button in the dialog to save a local security exception.</li>
+          <li>Alternatively, you can open Terminal and run the command:
+            <div class="code-cmd">
+              <span id="cmd-gatekeeper">xattr -cr "/Applications/LexSort Personal AI.app"</span>
+              <button onclick="copyText('cmd-gatekeeper')">Copy</button>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <!-- FAQ 2: Windows SmartScreen -->
+      <div class="faq-item" id="faq-smartscreen">
+        <h3>🪟 Windows: "Windows protected your PC" (SmartScreen)</h3>
+        <p>Windows Defender flags newly compiled or unsigned desktop apps. This is normal for sovereign local software:</p>
+        <ol>
+          <li>On the SmartScreen warning window, click the small link labeled <strong>More info</strong>.</li>
+          <li>Click the <strong>Run anyway</strong> button that appears at the bottom.</li>
+          <li>Ensure you downloaded the installer directly from our official <code>lexsort.com</code> distribution page.</li>
+        </ol>
+      </div>
+
+      <!-- FAQ 3: Port conflicts -->
+      <div class="faq-item" id="faq-port">
+        <h3>⚡ Startup Error: Port 11434 Binding Failed</h3>
+        <p>VERA runs its local inference engine on port 11434. If you already have a background instance of Ollama running, the port will be occupied. VERA will attempt to connect to it directly, but if there's a permission conflict, you may need to stop the background daemon:</p>
+        <ul>
+          <li><strong>macOS:</strong> Quit the Ollama icon in the menu bar, or run:
+            <div class="code-cmd">
+              <span id="cmd-kill-mac">killall Ollama</span>
+              <button onclick="copyText('cmd-kill-mac')">Copy</button>
+            </div>
+          </li>
+          <li><strong>Windows:</strong> Right-click the Ollama icon in the system tray and select "Quit", or terminate it via Task Manager.</li>
+          <li><strong>Linux:</strong> Terminate the service via systemd:
+            <div class="code-cmd">
+              <span id="cmd-kill-linux">sudo systemctl stop ollama</span>
+              <button onclick="copyText('cmd-kill-linux')">Copy</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- FAQ 4: Slow Download / Cache Failures -->
+      <div class="faq-item">
+        <h3>📡 Model Downloads and Speed Constraints</h3>
+        <p>During first boot, VERA downloads the optimal LLM (typically Llama 3.2 3B or 1B) to your disk. This is a one-time process:</p>
+        <ul>
+          <li><strong>Disk Space:</strong> Ensure you have at least <strong>10 GB of free space</strong> on your primary drive.</li>
+          <li><strong>Time:</strong> The model is ~2GB. On standard WiFi, this may take 1 to 5 minutes. If it fails, VERA will automatically retry from the last cached byte.</li>
+          <li><strong>Speed:</strong> If responses feel sluggish, verify that VERA detected at least 8 GB of RAM. VERA automatically matches the model to your hardware to avoid memory swapping.</li>
+        </ul>
+      </div>
+
+      <!-- FAQ 5: Core Privacy Guarantees -->
+      <div class="faq-item">
+        <h3>🔒 Privacy Verification: Does VERA phone home?</h3>
+        <p>Never. VERA is engineered to be network-isolated by design. The inference engine binds strictly to your loopback address (<code>127.0.0.1</code>). No analytics, telemetry, crash reports, or user inputs ever leave your machine. You can verify this by turning off your WiFi entirely; VERA runs 100% offline.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Community Support Section -->
+  <section class="container">
+    <div class="community-bar">
+      <h2>Need Extra Help? Join the Community</h2>
+      <p>Talk directly with LexSort developers, share your hardware setups, and report bugs.</p>
+      <div class="community-links">
+        <a href="https://discord.gg/kpZ3hWyAaq" target="_blank" class="community-btn btn-discord">Discord Server</a>
+        <a href="https://www.reddit.com/user/LexSort/" target="_blank" class="community-btn btn-reddit">Reddit Community</a>
+        <a href="https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/issues" target="_blank" class="community-btn btn-github">GitHub Issues</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 LexSort Inc. All rights reserved. &nbsp;·&nbsp; Total Privacy. Sovereign Local-First AI.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Copy helper
+    function copyText(id) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text);
+      alert('Command copied to clipboard!');
+    }
+
+    // Diagnostic log parser
+    document.getElementById('diagInput').addEventListener('input', function(e) {
+      const raw = e.target.value.trim();
+      const outputDiv = document.getElementById('parserOutput');
+      const container = document.getElementById('outputContainer');
+
+      if (!raw) {
+        outputDiv.classList.remove('active');
+        return;
+      }
+
+      // Parser logic
+      let os = "Unknown";
+      let ram = "Unknown";
+      let model = "Unknown";
+      let port = "Unknown";
+      let phase = "Unknown";
+      let error = "None";
+      let appleSilicon = "No";
+
+      // Regex checks
+      const osMatch = raw.match(/-\s+\*\*OS Platform\*\*:\s+(.+)/i);
+      const ramMatch = raw.match(/-\s+\*\*RAM Detected\*\*:\s+(.+)/i);
+      const modelMatch = raw.match(/-\s+\*\*Selected Model\*\*:\s+(.+)/i);
+      const portMatch = raw.match(/-\s+\*\*Local Port Binding\*\*:\s+(.+)/i);
+      const phaseMatch = raw.match(/-\s+\*\*Current Phase\*\*:\s+(.+)/i);
+      const errorMatch = raw.match(/-\s+\*\*Startup Error\*\*:\s+([\s\S]+?)(?=\n-|$)/i);
+      const siliconMatch = raw.match(/-\s+\*\*Apple Silicon\*\*:\s+(.+)/i);
+
+      if (osMatch) os = osMatch[1];
+      if (ramMatch) ram = ramMatch[1];
+      if (modelMatch) model = modelMatch[1];
+      if (portMatch) port = portMatch[1];
+      if (phaseMatch) phase = phaseMatch[1];
+      if (siliconMatch) appleSilicon = siliconMatch[1];
+      if (errorMatch) error = errorMatch[1].trim();
+
+      let cardsHtml = `<h3>🔧 Diagnostic Parsing Results:</h3>`;
+
+      // 1. Identify Environment
+      cardsHtml += `
+        <div style="font-size:12px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--text-muted);">
+          <strong>Detected Specs:</strong> OS: ${os} · RAM: ${ram} · Apple Silicon: ${appleSilicon} · Model: ${model} · Loopback Port: ${port}
+        </div>
+      `;
+
+      // 2. RAM Check
+      let ramGB = parseFloat(ram);
+      if (!isNaN(ramGB) && ramGB < 8) {
+        cardsHtml += `
+          <div class="output-card warning">
+            <h3>⚠️ Low System RAM Warning</h3>
+            <p>Your hardware has ${ramGB} GB of RAM. VERA requires at least 8 GB of system memory for fluid operations. You may experience slow model generation speeds due to virtual memory swapping.</p>
+          </div>
+        `;
+      }
+
+      // 3. Apple Silicon vs Intel check
+      if (os.toLowerCase().includes("mac") && appleSilicon.toLowerCase().includes("no")) {
+        cardsHtml += `
+          <div class="output-card warning">
+            <h3>🖥️ Intel CPU Configuration</h3>
+            <p>Your Mac is running an Intel processor. Unlike Apple Silicon, Intel processors do not share unified memory with the graphics engine, meaning inference runs on the CPU. Expect generation speeds to be slower than on M1/M2/M3/M4 systems.</p>
+          </div>
+        `;
+      }
+
+      // 4. Check Port binding errors or general startup failures
+      if (error !== "None" && error !== "") {
+        const errorLower = error.toLowerCase();
+        
+        if (errorLower.includes("port") || errorLower.includes("bind") || errorLower.includes("address already in use") || errorLower.includes("11434")) {
+          // Port Conflict card
+          let killCmd = "killall Ollama";
+          let osFixGuide = "Quit Ollama in your Menu Bar.";
+          if (os.toLowerCase().includes("win")) {
+            killCmd = "taskkill /f /im ollama.exe";
+            osFixGuide = "Right-click the Ollama icon in the system tray and select 'Quit'.";
+          } else if (os.toLowerCase().includes("linux")) {
+            killCmd = "sudo systemctl stop ollama";
+            osFixGuide = "Stop the background system service.";
+          }
+
+          cardsHtml += `
+            <div class="output-card danger">
+              <h3>🚨 Port Conflict (Address Already in Use)</h3>
+              <p>VERA could not launch because port 11434 is already in use by another local application (likely a system-wide Ollama daemon). ${osFixGuide}</p>
+              <div class="code-cmd">
+                <span id="fix-port-cmd">${killCmd}</span>
+                <button onclick="copyText('fix-port-cmd')">Copy Fix</button>
+              </div>
+            </div>
+          `;
+        } else if (errorLower.includes("permissions") || errorLower.includes("damaged") || errorLower.includes("developer")) {
+          // Gatekeeper/SmartScreen card
+          cardsHtml += `
+            <div class="output-card danger">
+              <h3>🔒 Security Restriction Blocked Launch</h3>
+              <p>Your operating system's security module (macOS Gatekeeper or Windows SmartScreen) prevented VERA from executing its helper binaries. Please follow the bypass guidelines on this page.</p>
+            </div>
+          `;
+        } else {
+          // General Startup error
+          cardsHtml += `
+            <div class="output-card danger">
+              <h3>🚨 Startup Failed: ${error}</h3>
+              <p>An unexpected error occurred during the boot phase (<strong>${phase}</strong>). We recommend trying a <strong>Retry Boot</strong> inside the app, or copying this report to submit on our GitHub Issues page.</p>
+            </div>
+          `;
+        }
+      } else {
+        // No startup errors
+        cardsHtml += `
+          <div class="output-card success">
+            <h3>✓ Boot Diagnostics Healthy</h3>
+            <p>No active startup errors detected. If the app is failing to generate chat responses, ensure that your firewall is not blocking loopback traffic on <code>127.0.0.1</code> and check that your disk space has at least 5GB free.</p>
+          </div>
+        `;
+      }
+
+      container.innerHTML = cardsHtml;
+      outputDiv.classList.add('active');
+    });
+  </script>
+</body>
+</html>

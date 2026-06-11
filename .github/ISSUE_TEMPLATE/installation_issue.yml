@@ -1,0 +1,66 @@
+name: Installation / Startup Issue
+description: Report errors during application boot, hardware detection, or installation.
+title: "[Startup Error]: "
+labels: ["bug", "installation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Thank you for helping us make VERA better!
+        Before filing an issue, please make sure you have:
+        1. Read the [Troubleshooting Guide & FAQ](https://lexsort.com/faq.html).
+        2. Verified that your local loopback address `127.0.0.1` is accessible.
+  
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: What operating system are you running VERA on?
+      options:
+        - "macOS (Apple Silicon — M1/M2/M3/M4)"
+        - "macOS (Intel Core)"
+        - "Windows 10 / 11 (x64)"
+        - "Linux (Ubuntu/Debian/AppImage)"
+    validations:
+      required: true
+
+  - type: input
+    id: ram
+    attributes:
+      label: System RAM (GB)
+      placeholder: e.g. 8 GB, 16 GB, 64 GB
+    validations:
+      required: true
+
+  - type: textarea
+    id: error_msg
+    attributes:
+      label: Boot Error Details
+      description: Paste the error message displayed on the startup screen.
+      placeholder: e.g. "start_inference_server: Port 11434 binding failed..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostic_report
+    attributes:
+      label: Sovereign Diagnostic Report
+      description: Paste the raw text copied from the "Diagnostic Report" modal in VERA.
+      render: markdown
+      placeholder: |
+        ### VERA Personal AI — Diagnostic Report
+        - **VERA Version**: 1.0.0 (Freeware)
+        ...
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklists
+    attributes:
+      label: Troubleshooting Checklist
+      description: Please confirm you've attempted basic resolutions.
+      options:
+        - label: I have reviewed the platform-specific instructions on the support website.
+          required: true
+        - label: I have copied the diagnostic log and pasted it above without modifications.
+          required: true
