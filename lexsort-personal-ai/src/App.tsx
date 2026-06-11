@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { openUrl } from "@tauri-apps/plugin-opener";
 import "./app.css";
 import veraLogo from "./assets/vera-logo.jpg";
 
@@ -47,14 +48,16 @@ const PHASE = {
 };
 
 export default function App() {
-  const [phase,       setPhase]       = useState<string>(PHASE.DETECTING);
-  const [hardware,    setHardware]    = useState<HardwareInfo | null>(null);
-  const [dlProgress,  setDlProgress]  = useState<DownloadProgress>({ status: "", percent: 0, downloaded: 0, total: 0 });
-  const [messages,    setMessages]    = useState<Message[]>([]);
-  const [input,       setInput]       = useState<string>("");
-  const [streaming,   setStreaming]   = useState<boolean>(false);
-  const [error,       setError]       = useState<string>("");
-  const [serverPort,  setServerPort]  = useState<number>(8765);
+  const [phase,            setPhase]            = useState<string>(PHASE.DETECTING);
+  const [hardware,         setHardware]         = useState<HardwareInfo | null>(null);
+  const [dlProgress,       setDlProgress]       = useState<DownloadProgress>({ status: "", percent: 0, downloaded: 0, total: 0 });
+  const [messages,         setMessages]         = useState<Message[]>([]);
+  const [input,            setInput]            = useState<string>("");
+  const [streaming,        setStreaming]        = useState<boolean>(false);
+  const [error,            setError]            = useState<string>("");
+  const [serverPort,       setServerPort]       = useState<number>(11434);
+  const [showDiagnostics,  setShowDiagnostics]  = useState<boolean>(false);
+  const [diagnosticCopied, setDiagnosticCopied] = useState<boolean>(false);
 
   const bottomRef     = useRef<HTMLDivElement | null>(null);
   const abortRef      = useRef<AbortController | null>(null);
@@ -243,6 +246,53 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
+  // ── Diagnostics Generator ──────────────────────────────────────────────────
+  const generateDiagnosticText = () => {
+    return [
+      `### VERA Personal AI — Diagnostic Report`,
+      `- **VERA Version**: 1.0.0 (Freeware)`,
+      `- **OS Platform**: ${hardware?.platform || "Detecting..."}`,
+      `- **RAM Detected**: ${hardware?.ram_gb !== undefined ? `${hardware.ram_gb} GB` : "Detecting..."}`,
+      `- **CPU Cores**: ${hardware?.cpu_cores || "Detecting..."}`,
+      `- **Apple Silicon**: ${hardware?.apple_chip || "No"}`,
+      `- **Unified Memory**: ${hardware?.unified_memory ? "Yes" : "No"}`,
+      `- **Selected Model**: ${hardware?.model?.name || "None"} (ID: ${hardware?.model?.id || "None"})`,
+      `- **Model Cached**: ${hardware?.model_exists ? "Yes" : "No"}`,
+      `- **Local Port Binding**: ${serverPort}`,
+      `- **Current Phase**: ${phase}`,
+      `- **Startup Error**: ${error || "None"}`,
+      `\n*Generated on: ${new Date().toUTCString()}*`
+    ].join("\n");
+  };
+
+  const copyDiagnostics = () => {
+    navigator.clipboard.writeText(generateDiagnosticText());
+    setDiagnosticCopied(true);
+    setTimeout(() => setDiagnosticCopied(false), 2000);
+  };
+
+  const fileBugReport = async () => {
+    const reportText = generateDiagnosticText();
+    const encodedBody = encodeURIComponent(
+      `## Describe the issue:\n[Write here]\n\n` +
+      `## Diagnostic Logs (auto-generated):\n\`\`\`markdown\n${reportText}\n\`\`\``
+    );
+    const url = `https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/issues/new?title=Installation%20Issue&body=${encodedBody}`;
+    try {
+      await openUrl(url);
+    } catch {
+      window.open(url, "_blank");
+    }
+  };
+
+  const openCommunityHub = async () => {
+    try {
+      await openUrl("https://discord.gg/kpZ3hWyAaq");
+    } catch {
+      window.open("https://discord.gg/kpZ3hWyAaq", "_blank");
+    }
+  };
+
   // ── Render: Loading phases ─────────────────────────────────────────────────
   if (phase !== PHASE.READY) {
     return (
@@ -291,7 +341,46 @@ export default function App() {
           <div className="boot-status error">
             <p>⚠ Startup failed</p>
             <p className="error-detail">{error}</p>
-            <button onClick={bootSequence} className="retry-btn">Retry</button>
+            <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
+              <button onClick={bootSequence} className="retry-btn">Retry Boot</button>
+              <button
+                onClick={() => setShowDiagnostics(true)}
+                className="retry-btn"
+                style={{ background: "transparent", border: "1px solid var(--border)", color: "var(--text)" }}
+              >
+                Diagnostic Report
+              </button>
+            </div>
+            <p style={{ marginTop: "20px", fontSize: "12px" }}>
+              Need help? Join the{" "}
+              <span onClick={openCommunityHub} style={{ color: "var(--accent)", cursor: "pointer", textDecoration: "underline" }}>
+                Discord Community
+              </span>
+            </p>
+          </div>
+        )}
+
+        {/* Diagnostic Modal in boot screen */}
+        {showDiagnostics && (
+          <div className="diagnostic-modal-overlay">
+            <div className="diagnostic-modal">
+              <h3>Sovereign Diagnostic Utility</h3>
+              <p>Verify your hardware configuration and local server status below. You can copy this report to paste into community help boards or file an issue.</p>
+              <div className="diagnostic-code">
+                {generateDiagnosticText()}
+              </div>
+              <div className="diagnostic-buttons">
+                <button onClick={copyDiagnostics} className="diagnostic-btn diagnostic-btn-secondary">
+                  {diagnosticCopied ? "✓ Copied!" : "Copy Report"}
+                </button>
+                <button onClick={fileBugReport} className="diagnostic-btn diagnostic-btn-primary">
+                  File Bug Report
+                </button>
+                <button onClick={() => setShowDiagnostics(false)} className="diagnostic-btn diagnostic-btn-secondary" style={{ flex: "0 0 auto" }}>
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -316,6 +405,13 @@ export default function App() {
             </span>
           )}
           <span className="privacy-badge">● Private</span>
+          <button
+            onClick={() => setShowDiagnostics(true)}
+            className="hdr-btn"
+            style={{ borderColor: "var(--accent)", color: "var(--text)", fontWeight: 600 }}
+          >
+            Support
+          </button>
           {messages.length > 0 && (
             <>
               <button onClick={saveChat}  className="hdr-btn" title="Save transcript">Save</button>
@@ -366,6 +462,30 @@ export default function App() {
           {streaming ? <StopIcon /> : <><SendIcon /><span style={{marginLeft:"6px",fontSize:"13px",fontWeight:600}}>Send</span></>}
         </button>
       </footer>
+
+      {/* Diagnostic Modal in Chat */}
+      {showDiagnostics && (
+        <div className="diagnostic-modal-overlay">
+          <div className="diagnostic-modal">
+            <h3>Sovereign Diagnostic Utility</h3>
+            <p>Verify your hardware configuration and local server status below. You can copy this report to paste into community help boards or file an issue.</p>
+            <div className="diagnostic-code">
+              {generateDiagnosticText()}
+            </div>
+            <div className="diagnostic-buttons">
+              <button onClick={copyDiagnostics} className="diagnostic-btn diagnostic-btn-secondary">
+                {diagnosticCopied ? "✓ Copied!" : "Copy Report"}
+              </button>
+              <button onClick={fileBugReport} className="diagnostic-btn diagnostic-btn-primary">
+                File Bug Report
+              </button>
+              <button onClick={() => setShowDiagnostics(false)} className="diagnostic-btn diagnostic-btn-secondary" style={{ flex: "0 0 auto" }}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
