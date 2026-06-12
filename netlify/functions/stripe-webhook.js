@@ -137,26 +137,51 @@ exports.handler = async (event, context) => {
     return { statusCode: 400, body: `Webhook Error: ${err.message}` };
   }
 
-  // ── Handle subscription created / activated ────────────────────────────
+  // ── Handle subscription created / activated / checkout completed ───────
   if (
+    stripeEvent.type === 'checkout.session.completed' ||
     stripeEvent.type === 'customer.subscription.created' ||
     stripeEvent.type === 'invoice.payment_succeeded'
   ) {
-    const subscription = stripeEvent.data.object;
-    const discordUserId = subscription.metadata?.discord_user_id;
-    const discordUsername = subscription.metadata?.discord_username;
+    let subscription;
+    let discordUserId;
+    let discordUsername;
+    let subscriptionId;
+
+    if (stripeEvent.type === 'checkout.session.completed') {
+      const session = stripeEvent.data.object;
+      discordUserId = session.metadata?.discord_user_id;
+      discordUsername = session.metadata?.discord_username;
+      subscriptionId = session.subscription;
+
+      // Retrieve full subscription to check billing interval
+      if (subscriptionId) {
+        try {
+          subscription = await stripe.subscriptions.retrieve(subscriptionId, {}, {
+            apiVersion: '2026-02-25.preview'
+          });
+        } catch (e) {
+          console.error('Failed to retrieve subscription:', e.message);
+        }
+      }
+    } else {
+      subscription = stripeEvent.data.object;
+      discordUserId = subscription.metadata?.discord_user_id;
+      discordUsername = subscription.metadata?.discord_username;
+      subscriptionId = subscription.id;
+    }
 
     if (!discordUserId) {
-      console.log('No Discord user ID in subscription metadata, skipping.');
+      console.log('No Discord user ID found, skipping.');
       return { statusCode: 200, body: JSON.stringify({ received: true }) };
     }
 
     // Calculate expiry (30 days for monthly, 365 days for yearly + 14 trial days if initial creation)
     let durationDays = 30;
     try {
-      let interval = subscription.items?.data?.[0]?.plan?.interval;
+      let interval = subscription?.items?.data?.[0]?.plan?.interval;
       if (!interval) {
-        interval = subscription.lines?.data?.[0]?.plan?.interval;
+        interval = subscription?.lines?.data?.[0]?.plan?.interval;
       }
       if (interval === 'year') {
         durationDays = 365;
@@ -166,12 +191,12 @@ exports.handler = async (event, context) => {
       console.warn('Could not determine subscription interval, defaulting to 30 days:', e.message);
     }
 
-    if (stripeEvent.type === 'customer.subscription.created') {
+    if (stripeEvent.type === 'customer.subscription.created' || stripeEvent.type === 'checkout.session.completed') {
       durationDays += 14; // Include 14-day free trial grace period
     }
 
     const expiresAt = Math.floor(Date.now() / 1000) + durationDays * 24 * 60 * 60;
-    const licenseKey = generateLicenseKey(discordUserId, subscription.id, expiresAt);
+    const licenseKey = generateLicenseKey(discordUserId, subscriptionId, expiresAt);
 
     try {
       // Grant Discord tester role

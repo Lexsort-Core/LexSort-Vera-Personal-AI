@@ -46,6 +46,9 @@ exports.handler = async (event, context) => {
           quantity: 1,
         },
       ],
+      managed_payments: {
+        enabled: true,
+      },
       metadata: {
         discord_user_id: discordUserId,
         discord_username: discordUsername,
@@ -62,6 +65,8 @@ exports.handler = async (event, context) => {
       },
       success_url: `${process.env.URL}/vera-pro-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.URL}/vera-pro`,
+    }, {
+      apiVersion: '2026-02-25.preview'
     });
 
     return {
