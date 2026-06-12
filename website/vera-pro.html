@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERA Pro — Local AI Suite by LexSort</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --canvas: #05050a;
+      --surface: #0b0b14;
+      --surface-glass: rgba(11, 11, 20, 0.7);
+      --accent: #8b5cf6;
+      --accent-glow: rgba(139, 92, 246, 0.15);
+      --accent-gradient: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+      --border: #1e1b4b;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.15);
+      --pro-gradient: linear-gradient(135deg, #c084fc 0%, #8b5cf6 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--canvas);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Background Glow Effects */
+    .glow-bg {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 500px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Navigation Header */
+    header.nav-header {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 5, 10, 0.84);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .logo-block img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #fff;
+      padding: 2px;
+    }
+
+    .logo-block span.brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-block span.pro-tag {
+      background: var(--pro-gradient);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    .nav-links a.active {
+      color: #c084fc;
+      font-weight: 600;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      padding: 90px 0 70px;
+      text-align: center;
+    }
+
+    .pro-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(167, 139, 250, 0.1);
+      border: 1px solid rgba(167, 139, 250, 0.25);
+      color: #c084fc;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 58px;
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .hero h1 span.gradient-text {
+      background: var(--pro-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-tagline {
+      font-size: 20px;
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto 36px;
+      line-height: 1.5;
+    }
+
+    /* Coming Soon CTAs and Badges */
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 32px auto 20px;
+      max-width: 600px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(124, 58, 237, 0.6);
+      opacity: 0.95;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: #ffffff;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #a78bfa;
+    }
+
+    .privacy-note {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 16px;
+    }
+
+    .pro-preview-image {
+      width: 100%;
+      max-width: 800px;
+      margin: 40px auto 0;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      display: block;
+    }
+
+    /* Features Section */
+    .features-section {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-title {
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto 56px;
+      font-size: 16px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px 30px;
+      transition: transform 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(167, 139, 250, 0.4);
+    }
+
+    .feature-icon {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .feature-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(167, 139, 250, 0.1);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      color: #c084fc;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    /* Comparison Section */
+    .comparison-section {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .comp-table th, .comp-table td {
+      padding: 16px 24px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comp-table th {
+      background: rgba(255, 255, 255, 0.02);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .comp-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comp-table td.feature-name {
+      font-weight: 600;
+      color: #e2e8f0;
+      font-size: 14px;
+    }
+
+    .comp-table td.val {
+      font-size: 14px;
+    }
+
+    .comp-table td.val-pro {
+      color: #c084fc;
+      font-weight: 600;
+    }
+
+    /* Sovereign Promise Box */
+    .sovereign-box {
+      margin: 80px 0;
+      background: radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+      border: 1px dashed rgba(139, 92, 246, 0.3);
+      border-radius: 16px;
+      padding: 44px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .sovereign-icon {
+      font-size: 48px;
+      flex-shrink: 0;
+    }
+
+    .sovereign-text h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .sovereign-text p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      padding: 80px 0 120px;
+      border-top: 1px solid var(--border);
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+
+    .faq-item h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .faq-item p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer.page-footer {
+      padding: 50px 0;
+      border-top: 1px solid var(--border);
+      background: #030306;
+      text-align: center;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .footer-logo img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #fff;
+      padding: 2px;
+    }
+
+    .footer-logo span {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #fff;
+    }
+
+    .footer-copyright {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 800px) {
+      .hero h1 { font-size: 42px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .comp-table { display: block; overflow-x: auto; }
+      .sovereign-box { flex-direction: column; text-align: center; padding: 30px; }
+      .faq-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Glow -->
+  <div class="glow-bg"></div>
+
+  <!-- Corporate Navigation Bar -->
+  <header class="nav-header">
+    <div class="container nav-container">
+      <a href="index.html" class="logo-block">
+        <img src="vera-logo-site.jpg" alt="LexSort Logo" />
+        <span class="brand-name">LexSort VERA</span>
+        <span class="pro-tag">PRO</span>
+      </a>
+      <nav class="nav-links">
+        <a href="vera.html">VERA</a>
+        <a href="freeware.html">Freeware</a>
+        <a href="vera-pro.html" class="active">Pro Suite</a>
+        <a href="download.html">Download</a>
+        <a href="faq.html">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="pro-pill">✦ VERA Pro — Launching July 1, 2026</div>
+      <h1>Local AI. <span class="gradient-text">Pro Power.</span></h1>
+      <p class="hero-tagline">$5.99/month — cancel anytime. 100% local. 0% data collection.</p>
+      
+      <div class="cta-buttons">
+        <a href="https://discord.gg/lexsort" class="btn-primary" target="_blank" rel="noopener noreferrer">
+          <span>🎮</span> Join Discord — Test Now
+        </a>
+        <a href="https://reddit.com/r/lexsort" class="btn-secondary" target="_blank" rel="noopener noreferrer">
+          <span>📖</span> Follow on Reddit
+        </a>
+      </div>
+
+      <p class="privacy-note">
+        🔒 No email. No tracking. No data collection. Ever.
+      </p>
+
+      <img src="assets/vera_pro_banner_wide.png" alt="VERA Pro Suite Preview" class="pro-preview-image" />
+    </div>
+  </section>
+
+  <!-- Core Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <h2 class="section-title">Upgrade Your Workspace</h2>
+      <p class="section-subtitle">VERA Pro goes beyond basic chat, equipping your local environment with powerful workflow modules that run entirely on your hardware.</p>
+      
+      <div class="features-grid">
+        <!-- Feature 1: Auto Emailer -->
+        <div class="feature-card">
+          <span class="feature-badge">Module active</span>
+          <div class="feature-icon">✉️</div>
+          <h3>Auto Emailer</h3>
+          <p>Draft and dispatch emails locally using your private LLM. Prompts generate context-aware communications, which you can review and edit in a rich-text composer before sending securely using your own SMTP credentials (SMTP passwords are encrypted locally).</p>
+        </div>
+
+        <!-- Feature 2: Guardian Watch -->
+        <div class="feature-card">
+          <span class="feature-badge">Module active</span>
+          <div class="feature-icon">🛡️</div>
+          <h3>Guardian Watch</h3>
+          <p>A smart local system and hardware monitor. Guardian tracks your CPU, memory, and disk usage. When system spikes or anomalies occur, VERA uses the local LLM to explain in plain English what's causing the issue and proposes actionable fixes.</p>
+        </div>
+
+        <!-- Feature 3: LexSort-GO Mobile -->
+        <div class="feature-card">
+          <span class="feature-badge">Module active</span>
+          <div class="feature-icon">📱</div>
+          <h3>LexSort-GO Companion</h3>
+          <p>Connect your phone to VERA over local Wi-Fi. The desktop app generates a secure QR code which you scan on your phone to open a mobile-optimized client served by your machine. Access local AI chat from your couch, zero cloud data transfer involved.</p>
+        </div>
+
+        <!-- Feature 4: Core Add-Ons Slot -->
+        <div class="feature-card">
+          <span class="feature-badge" style="color: #10b981; background: rgba(16, 185, 129, 0.1);">Included</span>
+          <div class="feature-icon">➕</div>
+          <h3>Future Core Modules</h3>
+          <p>Your subscription includes lifetime access to future LexSort Core suites as they ship. Get the advanced Finance Organizer module (with local OCR receipt scanning) and the CRA Tax Prep & Credit Discovery Engine at no extra cost.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Comparison Table -->
+  <section class="comparison-section">
+    <div class="container">
+      <h2 class="section-title">Compare Tiers</h2>
+      <p class="section-subtitle">Pick the tier that fits your workflow. The base VERA Chat interface is free and open-source forever.</p>
+      
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Capabilities</th>
+            <th>VERA Freeware</th>
+            <th>VERA Pro Suite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feature-name">Sovereign Chat & Local Inference</td>
+            <td class="val">✅ Included (Free)</td>
+            <td class="val-pro">✅ Included</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Data Privacy (No Cloud logs)</td>
+            <td class="val">✅ Guaranteed (100% Local)</td>
+            <td class="val-pro">✅ Guaranteed (100% Local)</td>
+          </tr>
+          <tr>
+            <td class="feature-name">License Gate & Activation</td>
+            <td class="val">None (Open source)</td>
+            <td class="val-pro">🔒 Local signature check</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Auto Emailer Module (SMTP composing)</td>
+            <td class="val">❌ No</td>
+            <td class="val-pro">✅ Yes</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Guardian Watch (System anomaly diagnosis)</td>
+            <td class="val">❌ No</td>
+            <td class="val-pro">✅ Yes</td>
+          </tr>
+          <tr>
+            <td class="feature-name">LexSort-GO (LAN Mobile Bridge)</td>
+            <td class="val">❌ No</td>
+            <td class="val-pro">✅ Yes</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Future Finance & CRA Tax organizers</td>
+            <td class="val">❌ No</td>
+            <td class="val-pro">✅ Yes</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Core Cost</td>
+            <td class="val" style="font-weight: 700;">Free Forever</td>
+            <td class="val-pro">$5.99 / month</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Sovereign Promise -->
+  <section class="container">
+    <div class="sovereign-box">
+      <div class="sovereign-icon">🛡️</div>
+      <div class="sovereign-text">
+        <h3>100% Sovereign License Verification</h3>
+        <p>Most "offline" software still contacts license servers once a day to track you. VERA Pro doesn't. Our licensing utilizes Ed25519 signatures. The app verifies your license key using a public key built directly into the app compiled code. We have no analytics servers, track no usage, and do not know when you run the app. Privacy isn't a setting; it's our architecture.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="container">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-subtitle">Everything you need to know about the Pro subscription and licensing flow.</p>
+      
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>How do I receive my license key?</h4>
+          <p>Immediately after Stripe checkout completes, you'll be redirected to a receipt page displaying your license key, and the key will be dispatched to your email address. Copy and paste this key into the VERA Pro activation screen to unlock Pro features.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Does the license key contact the internet?</h4>
+          <p>No. When you paste your key, VERA Pro parses it, verifies the signature locally against its hardcoded public key, checks the expiration date, and binds the license to your hardware fingerprint. No network calls are made during activation or use.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Can I use Pro on multiple computers?</h4>
+          <p>Yes. A single active subscription allows you to generate license keys for your personal devices. The key is cryptographically bound to your hardware fingerprint on activation to protect against mass leaks, but you can request additional activations via support.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>What happens if I cancel my subscription?</h4>
+          <p>When your subscription ends, your license key will expire and VERA Pro will revert to Freeware mode, meaning you will retain full access to VERA Chat, but Pro modules (Emailer, Guardian, Mobile pair) will become locked until renewal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div class="container">
+      <div class="footer-logo">
+        <img src="vera-logo-site.jpg" alt="LexSort Logo" />
+        <span>LexSort VERA Pro</span>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">LexSort Inc.</a>
+        <a href="vera.html">VERA Chat</a>
+        <a href="freeware.html">Freeware Foundation</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="tos.html">Terms of Service</a>
+      </div>
+      <p class="footer-copyright">&copy; 2026 LexSort Inc. All rights reserved. Sovereign local intelligence systems.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
