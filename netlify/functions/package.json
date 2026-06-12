@@ -1,0 +1,11 @@
+{
+  "name": "vera-pro-netlify-functions",
+  "version": "1.0.0",
+  "description": "Netlify serverless functions for VERA Pro tester infrastructure",
+  "dependencies": {
+    "stripe": "^14.21.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

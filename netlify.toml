@@ -8,9 +8,14 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 [functions."uptime-monitor"]
   schedule = "@hourly"
+
+# Stripe webhook needs raw body for signature verification
+[functions."stripe-webhook"]
+  included_files = []
 
 [[headers]]
   for = "/*"
