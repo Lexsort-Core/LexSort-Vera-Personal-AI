@@ -1,6 +1,6 @@
 /**
  * SupportPanel.tsx
- * Community hub, pre-filled bug report (opens GitHub Issues), and
+ * Community hub, in-app FAQ, pre-filled bug report (opens GitHub Issues), and
  * feedback form (posts to Discord webhook via Netlify function).
  *
  * Used by both VERA Freeware and VERA Pro.
@@ -12,7 +12,7 @@
  *   isPro          — true if running in Pro mode
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import "./SupportPanel.css";
 
 // ─── Config ──────────────────────────────────────────────────────────────────
@@ -30,6 +30,58 @@ const BUG_CATEGORIES = [
   "Module error",
   "Other",
 ];
+
+interface FAQItem {
+  q: string;
+  a: string;
+  category: "licensing" | "llm" | "privacy" | "troubleshooting";
+}
+
+const FAQ_ITEMS: FAQItem[] = [
+  {
+    category: "licensing",
+    q: "Does VERA Pro require an active internet connection?",
+    a: "No. VERA Pro operates 100% locally. Downloading an LLM model requires a one-time connection, but after that, all AI chat inference, database indexing, and cryptographic license signature checks run completely offline."
+  },
+  {
+    category: "licensing",
+    q: "Can I use my Pro subscription on multiple computers?",
+    a: "No. A single active subscription is for one (1) desktop computer. However, when the LexSort-GO Companion module launches, you will be permitted to pair exactly one (1) mobile device over local Wi-Fi."
+  },
+  {
+    category: "llm",
+    q: "Why is the AI model slow to respond?",
+    a: "VERA runs LLMs locally on your device's CPU, GPU, or unified memory. Inference speed is dictated entirely by your local hardware resources. If the response is sluggish, try closing other memory-heavy applications or selecting a lighter model (like Qwen 2.5 1.5B) under VERA Settings."
+  },
+  {
+    category: "privacy",
+    q: "Where are my chat logs and keys stored?",
+    a: "All chat logs, conversation histories, and local SMTP composition parameters are stored locally on your machine inside the encrypted configuration folder (~/.lexsort). No data is ever sent to LexSort or third-party servers."
+  },
+  {
+    category: "privacy",
+    q: "Does LexSort collect telemetry or tracking data?",
+    a: "Absolutely not. LexSort was founded on a strict off-grid, 0% data collection commitment. VERA collects zero telemetry, zero analytics, zero crash reports, and zero personal information of any kind."
+  },
+  {
+    category: "troubleshooting",
+    q: "The AI model fails to download or fails to load on boot. What do I do?",
+    a: "Verify that Ollama is running on port 11434 and that you have at least 10GB of free disk space. If the connection fails, restart VERA or click 'Retry Boot' on the startup screen to re-initiate the inference server binding."
+  },
+  {
+    category: "troubleshooting",
+    q: "How do I activate my VERA Pro license key?",
+    a: "Go to Settings → Pro License, paste your cryptographic key (which starts with 'VERA-PRO-'), and click Activate. The key signature is validated 100% locally on your machine using Ed25519 offline signature checks."
+  }
+];
+
+const CATEGORIES_MAP = {
+  all: "All Topics",
+  licensing: "🔑 Licensing",
+  llm: "🧠 Models & Speed",
+  privacy: "🔒 Privacy & Data",
+  troubleshooting: "🛠️ Troubleshooting",
+};
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -53,7 +105,7 @@ async function openExternalUrl(url: string) {
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Tab = "community" | "bug" | "feedback";
+type Tab = "community" | "faq" | "bug" | "feedback";
 
 interface Props {
   onClose:        () => void;
@@ -72,6 +124,11 @@ export default function SupportPanel({
 }: Props) {
   const [tab, setTab] = useState<Tab>("community");
 
+  // FAQ state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<keyof typeof CATEGORIES_MAP>("all");
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
   // Bug report state
   const [bugCategory, setBugCategory] = useState(BUG_CATEGORIES[0]);
   const [bugDesc, setBugDesc]         = useState("");
@@ -89,6 +146,22 @@ export default function SupportPanel({
 
   const joinDiscord = () => openExternalUrl(DISCORD_URL);
   const joinReddit  = () => openExternalUrl(REDDIT_URL);
+
+  // ── FAQ filtering ─────────────────────────────────────────────────────────
+
+  const filteredFAQs = useMemo(() => {
+    return FAQ_ITEMS.filter((item) => {
+      const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
+      const matchesQuery =
+        item.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.a.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesQuery;
+    });
+  }, [searchQuery, selectedCategory]);
+
+  const toggleFAQ = (index: number) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
+  };
 
   // ── Bug report — opens GitHub Issues pre-filled ───────────────────────────
 
@@ -175,7 +248,7 @@ export default function SupportPanel({
 
         {/* Tab bar */}
         <div className="sp-tabs" role="tablist">
-          {(["community", "bug", "feedback"] as Tab[]).map((t) => (
+          {(["community", "faq", "bug", "feedback"] as Tab[]).map((t) => (
             <button
               key={t}
               role="tab"
@@ -184,6 +257,7 @@ export default function SupportPanel({
               aria-selected={tab === t}
             >
               {t === "community" && "🌐 Community"}
+              {t === "faq"       && "📖 FAQ"}
               {t === "bug"       && "🐛 Bug Report"}
               {t === "feedback"  && "⭐ Feedback"}
             </button>
@@ -239,6 +313,70 @@ export default function SupportPanel({
                 </div>
                 <span className="sp-community-arrow">→</span>
               </button>
+            </div>
+          )}
+
+          {/* ── FAQ Tab ── */}
+          {tab === "faq" && (
+            <div className="sp-faq-container">
+              {/* Search Bar */}
+              <div className="sp-faq-search-bar">
+                <input
+                  type="text"
+                  className="sp-input sp-faq-search-input"
+                  placeholder="Search help topics..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setExpandedIndex(null);
+                  }}
+                />
+              </div>
+
+              {/* Categories list */}
+              <div className="sp-faq-categories">
+                {(Object.keys(CATEGORIES_MAP) as Array<keyof typeof CATEGORIES_MAP>).map((cat) => (
+                  <button
+                    key={cat}
+                    className={`sp-faq-category-btn${selectedCategory === cat ? " sp-faq-category-btn--active" : ""}`}
+                    onClick={() => {
+                      setSelectedCategory(cat);
+                      setExpandedIndex(null);
+                    }}
+                  >
+                    {CATEGORIES_MAP[cat]}
+                  </button>
+                ))}
+              </div>
+
+              {/* Accordion list */}
+              <div className="sp-faq-list">
+                {filteredFAQs.length > 0 ? (
+                  filteredFAQs.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`sp-faq-item${expandedIndex === idx ? " sp-faq-item--expanded" : ""}`}
+                    >
+                      <button
+                        className="sp-faq-question-btn"
+                        onClick={() => toggleFAQ(idx)}
+                      >
+                        <span>{item.q}</span>
+                        <span className="sp-faq-arrow">▶</span>
+                      </button>
+                      {expandedIndex === idx && (
+                        <div className="sp-faq-answer">
+                          {item.a}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="sp-faq-empty">
+                    No matching topics found. Try typing another search term.
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -383,6 +521,14 @@ export default function SupportPanel({
               </div>
             </div>
           )}
+
+          {/* Privacy Notice Banner */}
+          <div className="sp-privacy-notice">
+            <span className="sp-privacy-lock">🔒</span>
+            <div>
+              <strong>Privacy Commitment:</strong> VERA does not collect, track, or store any personal data or usage logs from this support interface. Bug reports and diagnostics are compiled locally and only sent when manually submitted by you.
+            </div>
+          </div>
 
         </div>
       </div>
