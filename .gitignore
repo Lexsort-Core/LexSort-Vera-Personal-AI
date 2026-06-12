@@ -34,7 +34,6 @@ Thumbs.db
 
 # Rust / Cargo
 lexsort-personal-ai/src-tauri/target/
-Cargo.lock
 
 # IDE
 .vscode/settings.json
