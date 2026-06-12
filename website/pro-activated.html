@@ -307,27 +307,58 @@
   </div>
 
   <script>
-    // Get license key from URL parameter
+    // Get license key or session from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const licenseKey = urlParams.get('license_key');
+    const sessionId = urlParams.get('session_id');
     const displayElement = document.getElementById('license-key-display');
     const copyButton = document.getElementById('btn-copy');
     
-    if (licenseKey && licenseKey.startsWith('VERA-PRO-')) {
-      displayElement.textContent = licenseKey;
-    } else {
-      displayElement.textContent = 'License key not found. Please check your Discord DMs or contact support.';
-      displayElement.style.color = '#ef4444';
-      displayElement.style.borderColor = '#7f1d1d';
+    let activeKey = null;
+
+    async function init() {
+      if (licenseKey && licenseKey.startsWith('VERA-PRO-')) {
+        activeKey = licenseKey;
+        displayElement.textContent = activeKey;
+      } else if (sessionId) {
+        displayElement.textContent = 'Verifying payment and generating key...';
+        try {
+          const res = await fetch(`/api/retrieve-license-key?session_id=${sessionId}`);
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || 'Failed to retrieve license key');
+          }
+          const data = await res.json();
+          if (data.licenseKey) {
+            activeKey = data.licenseKey;
+            displayElement.textContent = activeKey;
+            displayElement.style.color = 'var(--text-main)';
+            displayElement.style.borderColor = 'var(--border)';
+          } else {
+            throw new Error('No license key in response');
+          }
+        } catch (err) {
+          console.error(err);
+          displayElement.textContent = `Error: ${err.message}. Please check your Discord DMs or contact support.`;
+          displayElement.style.color = '#ef4444';
+          displayElement.style.borderColor = '#7f1d1d';
+        }
+      } else {
+        displayElement.textContent = 'License key not found. Please check your Discord DMs or contact support.';
+        displayElement.style.color = '#ef4444';
+        displayElement.style.borderColor = '#7f1d1d';
+      }
     }
+
+    init();
     
     async function copyLicenseKey() {
-      if (!licenseKey || !licenseKey.startsWith('VERA-PRO-')) {
+      if (!activeKey || !activeKey.startsWith('VERA-PRO-')) {
         alert('No valid license key to copy.');
         return;
       }
       try {
-        await navigator.clipboard.writeText(licenseKey);
+        await navigator.clipboard.writeText(activeKey);
         const originalText = copyButton.innerHTML;
         
         copyButton.innerHTML = `

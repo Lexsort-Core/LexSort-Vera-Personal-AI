@@ -63,7 +63,7 @@ exports.handler = async (event, context) => {
         },
         trial_period_days: 14, // 2-week free trial for beta testers
       },
-      success_url: `${process.env.URL}/vera-pro-success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.URL}/pro-activated.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.URL}/vera-pro`,
     }, {
       apiVersion: '2026-02-25.preview'

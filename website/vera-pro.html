@@ -485,12 +485,118 @@
       color: var(--text-muted);
     }
 
+    /* Pricing Section */
+    .pricing-section {
+      padding: 80px 0;
+      background: linear-gradient(180deg, rgba(5,5,10,0) 0%, rgba(139,92,246,0.03) 50%, rgba(5,5,10,0) 100%);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      max-width: 900px;
+      margin: 48px auto 0;
+    }
+
+    .pricing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(139, 92, 246, 0.05);
+    }
+
+    .pricing-card.popular {
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1);
+    }
+
+    .pricing-card.popular::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      padding: 1px;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -12px;
+      background: var(--accent-gradient);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 16px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+    }
+
+    .plan-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    .plan-price {
+      font-family: 'Outfit', sans-serif;
+      font-size: 44px;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .plan-duration {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .plan-description {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+      flex-grow: 1;
+      max-width: 320px;
+    }
+
+    .pricing-card .btn-primary {
+      width: 100%;
+      justify-content: center;
+    }
+
     @media (max-width: 800px) {
       .hero h1 { font-size: 42px; }
       .features-grid { grid-template-columns: 1fr; }
       .comp-table { display: block; overflow-x: auto; }
       .sovereign-box { flex-direction: column; text-align: center; padding: 30px; }
       .faq-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 450px; }
     }
   </style>
 </head>
@@ -640,6 +746,33 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing-section">
+    <div class="container">
+      <h2 class="section-title">Select Your Plan</h2>
+      <p class="section-subtitle">Start with a 14-day free trial. Cancel anytime. All plans are 100% private and run locally.</p>
+      
+      <div class="pricing-grid">
+        <!-- Monthly Plan -->
+        <div class="pricing-card">
+          <div class="plan-name">Monthly Plan</div>
+          <div class="plan-price">$5.99 <span class="plan-duration">/ month</span></div>
+          <p class="plan-description">Billed monthly. Complete local AI privacy, companion bridging, and system diagnostic modules.</p>
+          <a href="https://buy.stripe.com/9B65kF87V7ht9nd39U3sI01" class="btn-primary" target="_blank" rel="noopener noreferrer">Subscribe Monthly</a>
+        </div>
+
+        <!-- Yearly Plan -->
+        <div class="pricing-card popular">
+          <div class="popular-badge">Best Value (Save 17%)</div>
+          <div class="plan-name">Yearly Plan</div>
+          <div class="plan-price">$59.00 <span class="plan-duration">/ year</span></div>
+          <p class="plan-description">Billed annually. Full suite access with 14-day free trial. Includes priority access to future tax and financial organizer modules.</p>
+          <a href="https://buy.stripe.com/3cI5kF73RdFReHx8ue3sI00" class="btn-primary" target="_blank" rel="noopener noreferrer">Subscribe Annually</a>
+        </div>
+      </div>
     </div>
   </section>
 
