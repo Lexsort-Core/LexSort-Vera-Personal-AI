@@ -1,0 +1,115 @@
+// website/js/download-detector.js
+// LexSort Personal AI — OS Detection & Download Router
+// Uses GitHub Releases directly as a reliable download backend
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  // ── GitHub Release Base URL ──────────────────────────────────────────────
+  // Update version string here when a new release ships
+  const VERSION = "v1.0.0";
+  const GITHUB_BASE = `https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases/download/${VERSION}`;
+  const RELEASES_PAGE = "https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases/latest";
+
+  // ── Tauri-generated filenames (must match exactly what GitHub Actions produces)
+  const ASSETS = {
+    mac_arm:   `LexSort.Personal.AI_${VERSION.slice(1)}_aarch64.dmg`,
+    mac_intel: `LexSort.Personal.AI_${VERSION.slice(1)}_x64.dmg`,
+    windows:   `LexSort.Personal.AI_${VERSION.slice(1)}_x64-setup.exe`,
+    linux_deb: `LexSort.Personal.AI_${VERSION.slice(1)}_amd64.deb`,
+    linux_app: `LexSort.Personal.AI_${VERSION.slice(1)}_amd64.AppImage`,
+  };
+
+  // ── Platform Detection ───────────────────────────────────────────────────
+  const ua = window.navigator.userAgent;
+  const platform = window.navigator.platform;
+
+  // Mobile detection (including iPads spoofing Macintosh UA via Touch indicators)
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(ua) || 
+                   (ua.includes("Macintosh") && navigator.maxTouchPoints > 1);
+
+  // OS detection
+  const isWindows = ua.includes("Windows");
+  const isMac     = (ua.includes("Macintosh") || ua.includes("Mac OS X")) && !isMobile;
+  const isLinux   = ua.includes("Linux") && !ua.includes("Android") && !isMobile;
+
+  // Apple Silicon detection (WebGL renderer check - the most accurate browser method)
+  let isAppleSilicon = false;
+  if (isMac) {
+    if (ua.includes("arm64") || ua.includes("apple silicon")) {
+      isAppleSilicon = true;
+    } else {
+      try {
+        const canvas = document.createElement("canvas");
+        const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+        if (gl) {
+          const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+          if (debugInfo) {
+            const renderer = (gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || "").toLowerCase();
+            if (renderer.includes("apple") || renderer.includes("m1") || renderer.includes("m2") || renderer.includes("m3") || renderer.includes("m4")) {
+              isAppleSilicon = true;
+            }
+          }
+        }
+      } catch (e) {
+        // Fallback: Default to Apple Silicon since it's the dominant macOS hardware today
+        isAppleSilicon = true;
+      }
+    }
+  }
+
+  // ── DOM Elements ─────────────────────────────────────────────────────────
+  const downloadBtn     = document.getElementById("download-vera-btn");
+  const osBadge         = document.getElementById("os-badge");
+  const mobileWarning   = document.getElementById("mobile-warning");
+  const desktopSection  = document.getElementById("download-section");
+  const altLinks        = document.getElementById("alt-download-links");
+
+  // ── Mobile: show warning CTA ─────────────────────────────────────────────
+  if (isMobile) {
+    if (desktopSection) desktopSection.style.display = "none";
+    if (mobileWarning)  mobileWarning.style.display  = "block";
+    return;
+  }
+
+  // ── Desktop: set primary download ────────────────────────────────────────
+  let primaryUrl  = RELEASES_PAGE; // default fallback
+  let osLabel     = "Your Platform";
+  let altHtml     = "";
+
+  if (isWindows) {
+    primaryUrl = `${GITHUB_BASE}/${ASSETS.windows}`;
+    osLabel    = "Windows 10 / 11 (x64)";
+    altHtml    = `<a href="${RELEASES_PAGE}" target="_blank">Other versions →</a>`;
+
+  } else if (isMac) {
+    if (isAppleSilicon) {
+      primaryUrl = `${GITHUB_BASE}/${ASSETS.mac_arm}`;
+      osLabel    = "macOS (Apple Silicon)";
+      altHtml    = `Not Apple Silicon? <a href="${GITHUB_BASE}/${ASSETS.mac_intel}">Download macOS Intel build</a>`;
+    } else {
+      primaryUrl = `${GITHUB_BASE}/${ASSETS.mac_intel}`;
+      osLabel    = "macOS (Intel)";
+      altHtml    = `On an M1/M2/M3 Mac? <a href="${GITHUB_BASE}/${ASSETS.mac_arm}">Download Apple Silicon build</a>`;
+    }
+
+  } else if (isLinux) {
+    primaryUrl = `${GITHUB_BASE}/${ASSETS.linux_app}`;
+    osLabel    = "Linux (AppImage)";
+    altHtml    = `Also available as: <a href="${GITHUB_BASE}/${ASSETS.linux_deb}">Debian package (.deb)</a>`;
+  }
+
+  // ── Update DOM ────────────────────────────────────────────────────────────
+  if (downloadBtn) {
+    downloadBtn.href        = primaryUrl;
+    downloadBtn.innerHTML   = `⬇ Download for ${osLabel}`;
+  }
+
+  if (osBadge) {
+    osBadge.textContent = `Detected: ${osLabel}`;
+  }
+
+  if (altLinks && altHtml) {
+    altLinks.innerHTML = altHtml;
+  }
+
+});
