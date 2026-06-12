@@ -98,6 +98,30 @@ document.addEventListener("DOMContentLoaded", () => {
     altHtml    = `Also available as: <a href="${GITHUB_BASE}/${ASSETS.linux_deb}">Debian package (.deb)</a>`;
   }
 
+  // ── Analytics tracking ───────────────────────────────────────────────────
+  function sendAnalytics(filename, success = true, error = '') {
+    const payload = {
+      filename: filename,
+      success: success,
+      error: error,
+      user_agent: ua,
+      platform: platform,
+      referrer: document.referrer,
+      timestamp: new Date().toISOString()
+    };
+
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/download-attempt', JSON.stringify(payload));
+    } else {
+      fetch('/api/download-attempt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(() => {});
+    }
+  }
+
   // ── Update DOM ────────────────────────────────────────────────────────────
   if (downloadBtn) {
     downloadBtn.href        = primaryUrl;
@@ -112,4 +136,33 @@ document.addEventListener("DOMContentLoaded", () => {
     altLinks.innerHTML = altHtml;
   }
 
+  // Hook up event listeners to all platform download buttons
+  document.querySelectorAll('.platform-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const urlParts = btn.href.split('/');
+      const filename = urlParts[urlParts.length - 1];
+      sendAnalytics(filename, true);
+    });
+  });
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      const urlParts = downloadBtn.href.split('/');
+      const filename = urlParts[urlParts.length - 1];
+      sendAnalytics(filename, true);
+    });
+  }
+
+  if (altLinks) {
+    altLinks.addEventListener('click', (e) => {
+      const target = e.target.closest('a');
+      if (target && target.href) {
+        const urlParts = target.href.split('/');
+        const filename = urlParts[urlParts.length - 1];
+        sendAnalytics(filename, true);
+      }
+    });
+  }
+
 });
+

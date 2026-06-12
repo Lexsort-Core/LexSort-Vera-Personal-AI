@@ -1,0 +1,13 @@
+[build]
+  publish = "website"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[functions]
+  directory = "netlify/functions"
+
+[functions."uptime-monitor"]
+  schedule = "@hourly"
