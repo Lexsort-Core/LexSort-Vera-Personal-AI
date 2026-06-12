@@ -289,6 +289,7 @@ pub fn run() {
     tauri::Builder::default()
         .manage(ServerProcess(Mutex::new(None)))
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             commands::detect_hardware,
             commands::download_model,

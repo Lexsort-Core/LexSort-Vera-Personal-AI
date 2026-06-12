@@ -1,0 +1,391 @@
+/**
+ * SupportPanel.tsx
+ * Community hub, pre-filled bug report (opens GitHub Issues), and
+ * feedback form (posts to Discord webhook via Netlify function).
+ *
+ * Used by both VERA Freeware and VERA Pro.
+ *
+ * Props:
+ *   onClose        — called when the panel should close
+ *   appName        — "VERA Freeware" | "VERA Pro"
+ *   diagnosticText — optional pre-generated diagnostic info to pre-fill
+ *   isPro          — true if running in Pro mode
+ */
+
+import { useState, useCallback } from "react";
+import "./SupportPanel.css";
+
+// ─── Config ──────────────────────────────────────────────────────────────────
+const DISCORD_URL    = "https://discord.gg/kpZ3hWyAaq";
+const REDDIT_URL     = "https://www.reddit.com/user/LexSort/";
+const GITHUB_URL     = "https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/issues/new";
+const FEEDBACK_ENDPOINT = "https://lexsort.com/api/feedback"; // Netlify function
+
+const BUG_CATEGORIES = [
+  "App won't start / crashes on launch",
+  "AI model not responding",
+  "Slow inference / high RAM usage",
+  "Download / install error",
+  "UI / display issue",
+  "Module error",
+  "Other",
+];
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/** Opens a URL: tries Tauri opener, falls back to an invisible anchor click */
+async function openExternalUrl(url: string) {
+  try {
+    const { openUrl } = await import("@tauri-apps/plugin-opener");
+    await openUrl(url);
+  } catch {
+    // Fallback: create an invisible anchor and programmatically click it.
+    // This works inside Tauri's webview without the opener plugin.
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+}
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+type Tab = "community" | "bug" | "feedback";
+
+interface Props {
+  onClose:        () => void;
+  appName?:       string;
+  diagnosticText?: string;
+  isPro?:         boolean;
+}
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
+export default function SupportPanel({
+  onClose,
+  appName       = "VERA Freeware",
+  diagnosticText = "",
+  isPro         = false,
+}: Props) {
+  const [tab, setTab] = useState<Tab>("community");
+
+  // Bug report state
+  const [bugCategory, setBugCategory] = useState(BUG_CATEGORIES[0]);
+  const [bugDesc, setBugDesc]         = useState("");
+  const [bugSending, setBugSending]   = useState(false);
+  const [bugStatus, setBugStatus]     = useState<"idle"|"ok"|"err">("idle");
+
+  // Feedback state
+  const [stars, setStars]               = useState(0);
+  const [hoverStar, setHoverStar]       = useState(0);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackSending, setFeedbackSending] = useState(false);
+  const [feedbackStatus, setFeedbackStatus]   = useState<"idle"|"ok"|"err">("idle");
+
+  // ── Community actions ─────────────────────────────────────────────────────
+
+  const joinDiscord = () => openExternalUrl(DISCORD_URL);
+  const joinReddit  = () => openExternalUrl(REDDIT_URL);
+
+  // ── Bug report — opens GitHub Issues pre-filled ───────────────────────────
+
+  const submitBugReport = useCallback(async () => {
+    setBugSending(true);
+    setBugStatus("idle");
+
+    const body = [
+      `## Category\n${bugCategory}`,
+      `## Description\n${bugDesc || "(no description provided)"}`,
+      `## Diagnostic Info\n\`\`\`\n${diagnosticText || "Not available"}\n\`\`\``,
+      `## App\n${appName}${isPro ? " (Pro)" : " (Freeware)"}`,
+    ].join("\n\n");
+
+    const params = new URLSearchParams({
+      title:    `[${bugCategory}] User-reported issue`,
+      body,
+      labels:   isPro ? "bug,vera-pro" : "bug,vera-freeware",
+    });
+
+    const githubUrl = `${GITHUB_URL}?${params.toString()}`;
+
+    try {
+      await openExternalUrl(githubUrl);
+      setBugStatus("ok");
+    } catch {
+      setBugStatus("err");
+    } finally {
+      setBugSending(false);
+    }
+  }, [bugCategory, bugDesc, diagnosticText, appName, isPro]);
+
+  // ── Feedback — posts to Netlify function → Discord webhook ────────────────
+
+  const submitFeedback = useCallback(async () => {
+    if (!feedbackText.trim() && stars === 0) return;
+    setFeedbackSending(true);
+    setFeedbackStatus("idle");
+
+    try {
+      const res = await fetch(FEEDBACK_ENDPOINT, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          app:     appName,
+          rating:  stars,
+          message: feedbackText.trim(),
+          version: "1.0.0",
+        }),
+      });
+
+      if (!res.ok) throw new Error(`Server ${res.status}`);
+      setFeedbackStatus("ok");
+      setStars(0);
+      setFeedbackText("");
+    } catch {
+      // If the Netlify function is unreachable, fall back gracefully
+      setFeedbackStatus("err");
+    } finally {
+      setFeedbackSending(false);
+    }
+  }, [stars, feedbackText, appName]);
+
+  // ── Render ────────────────────────────────────────────────────────────────
+
+  return (
+    <div
+      className="sp-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Support & Community"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="sp-panel">
+
+        {/* Header */}
+        <div className="sp-header">
+          <div className="sp-header-left">
+            <h2 className="sp-title">Support & Community</h2>
+            <p className="sp-subtitle">{appName} · Built by LexSort Inc.</p>
+          </div>
+          <button className="sp-close" onClick={onClose} aria-label="Close">✕</button>
+        </div>
+
+        {/* Tab bar */}
+        <div className="sp-tabs" role="tablist">
+          {(["community", "bug", "feedback"] as Tab[]).map((t) => (
+            <button
+              key={t}
+              role="tab"
+              className={`sp-tab${tab === t ? " sp-tab--active" : ""}`}
+              onClick={() => setTab(t)}
+              aria-selected={tab === t}
+            >
+              {t === "community" && "🌐 Community"}
+              {t === "bug"       && "🐛 Bug Report"}
+              {t === "feedback"  && "⭐ Feedback"}
+            </button>
+          ))}
+        </div>
+
+        {/* Body */}
+        <div className="sp-body">
+
+          {/* ── Community tab ── */}
+          {tab === "community" && (
+            <div className="sp-community-grid">
+              <button className="sp-community-card" onClick={joinDiscord}>
+                <div className="sp-community-icon sp-community-icon--discord">💬</div>
+                <div className="sp-community-text">
+                  <p className="sp-community-name">Discord Server</p>
+                  <p className="sp-community-desc">Chat with the team, get help, share your workflows. We're active daily.</p>
+                </div>
+                <span className="sp-community-arrow">→</span>
+              </button>
+
+              <button className="sp-community-card" onClick={joinReddit}>
+                <div className="sp-community-icon sp-community-icon--reddit">🔴</div>
+                <div className="sp-community-text">
+                  <p className="sp-community-name">Reddit — r/LexSort</p>
+                  <p className="sp-community-desc">Share use cases, vote on feature ideas, and connect with other users.</p>
+                </div>
+                <span className="sp-community-arrow">→</span>
+              </button>
+
+              <p className="sp-divider-label">Help & Documentation</p>
+
+              <button
+                className="sp-community-card"
+                onClick={() => openExternalUrl("https://lexsort.com/faq.html")}
+              >
+                <div className="sp-community-icon sp-community-icon--github">📖</div>
+                <div className="sp-community-text">
+                  <p className="sp-community-name">FAQ & Troubleshooting</p>
+                  <p className="sp-community-desc">Model won't load? App crashes? Start here.</p>
+                </div>
+                <span className="sp-community-arrow">→</span>
+              </button>
+
+              <button
+                className="sp-community-card"
+                onClick={() => openExternalUrl("https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI")}
+              >
+                <div className="sp-community-icon sp-community-icon--github">🐙</div>
+                <div className="sp-community-text">
+                  <p className="sp-community-name">GitHub Repository</p>
+                  <p className="sp-community-desc">Open source. Read the code, watch releases, star the repo.</p>
+                </div>
+                <span className="sp-community-arrow">→</span>
+              </button>
+            </div>
+          )}
+
+          {/* ── Bug Report tab ── */}
+          {tab === "bug" && (
+            <div className="sp-bug-form">
+              <p style={{ fontSize: "0.83rem", color: "#64748b", margin: "0 0 0.5rem" }}>
+                Your report opens a pre-filled GitHub Issue — no account needed to preview, but you'll need a GitHub account to submit. Diagnostic info is included automatically.
+              </p>
+
+              <div className="sp-field">
+                <label className="sp-label">Category</label>
+                <select
+                  className="sp-select"
+                  value={bugCategory}
+                  onChange={(e) => setBugCategory(e.target.value)}
+                >
+                  {BUG_CATEGORIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="sp-field">
+                <label className="sp-label">
+                  Describe the issue <span className="sp-label-hint">(optional)</span>
+                </label>
+                <textarea
+                  className="sp-textarea"
+                  rows={4}
+                  placeholder="What happened? What were you doing when it occurred?"
+                  value={bugDesc}
+                  onChange={(e) => setBugDesc(e.target.value)}
+                />
+              </div>
+
+              {diagnosticText && (
+                <div className="sp-field">
+                  <label className="sp-label">Auto-attached diagnostic info</label>
+                  <div className="sp-diag-block">{diagnosticText}</div>
+                </div>
+              )}
+
+              {bugStatus === "ok" && (
+                <div className="sp-alert sp-alert--success">
+                  ✅ GitHub opened — review the pre-filled report and click "Submit new issue".
+                </div>
+              )}
+              {bugStatus === "err" && (
+                <div className="sp-alert sp-alert--error">
+                  ⚠ Couldn't open browser. Try copying the diagnostic report and pasting it manually at github.com/Lexsort-Core/LexSort-Vera-Personal-AI/issues
+                </div>
+              )}
+
+              <div className="sp-actions">
+                <button className="sp-btn sp-btn--ghost" onClick={onClose}>Cancel</button>
+                <button
+                  className="sp-btn sp-btn--primary"
+                  onClick={submitBugReport}
+                  disabled={bugSending}
+                >
+                  {bugSending
+                    ? <><span className="sp-spinner" /> Opening GitHub…</>
+                    : "🐛 Open Bug Report"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Feedback tab ── */}
+          {tab === "feedback" && (
+            <div className="sp-feedback-form">
+              <p style={{ fontSize: "0.83rem", color: "#64748b", margin: "0 0 0.5rem" }}>
+                Your feedback goes directly to our Discord and Reddit — no account required. All feedback is anonymous.
+              </p>
+
+              <div className="sp-field">
+                <label className="sp-label">How would you rate VERA?</label>
+                <div className="sp-stars" role="group" aria-label="Star rating">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      className={`sp-star${(hoverStar || stars) >= n ? " sp-star--active" : ""}`}
+                      onClick={() => setStars(n)}
+                      onMouseEnter={() => setHoverStar(n)}
+                      onMouseLeave={() => setHoverStar(0)}
+                      aria-label={`${n} star${n !== 1 ? "s" : ""}`}
+                    >
+                      ⭐
+                    </button>
+                  ))}
+                  {stars > 0 && (
+                    <span style={{ fontSize: "0.78rem", color: "#94a3b8", alignSelf: "center", marginLeft: "0.5rem" }}>
+                      {["", "Needs work", "Below average", "Good", "Great", "Excellent!"][stars]}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="sp-field">
+                <label className="sp-label">
+                  Your thoughts <span className="sp-label-hint">(optional)</span>
+                </label>
+                <textarea
+                  className="sp-textarea"
+                  rows={4}
+                  placeholder="What do you love? What should we improve? Feature requests? We read every message."
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                />
+              </div>
+
+              {feedbackStatus === "ok" && (
+                <div className="sp-alert sp-alert--success">
+                  ✅ Thank you! Your feedback was sent to our Discord and Reddit.
+                </div>
+              )}
+              {feedbackStatus === "err" && (
+                <div className="sp-alert sp-alert--error">
+                  ⚠ Couldn't reach server. Join our{" "}
+                  <button
+                    style={{ background: "none", border: "none", color: "#c4b5fd", cursor: "pointer", padding: 0, textDecoration: "underline" }}
+                    onClick={joinDiscord}
+                  >
+                    Discord
+                  </button>{" "}
+                  and share your feedback there directly.
+                </div>
+              )}
+
+              <div className="sp-actions">
+                <button className="sp-btn sp-btn--ghost" onClick={onClose}>Cancel</button>
+                <button
+                  className="sp-btn sp-btn--primary"
+                  onClick={submitFeedback}
+                  disabled={feedbackSending || (stars === 0 && !feedbackText.trim())}
+                >
+                  {feedbackSending
+                    ? <><span className="sp-spinner" /> Sending…</>
+                    : "⭐ Send Feedback"}
+                </button>
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+    </div>
+  );
+}

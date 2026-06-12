@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { openUrl } from "@tauri-apps/plugin-opener";
 import "./app.css";
 import veraLogo from "./assets/vera-logo.jpg";
+import SupportPanel from "./SupportPanel";
 
 interface ModelInfo {
   id: string;
@@ -56,8 +56,7 @@ export default function App() {
   const [streaming,        setStreaming]        = useState<boolean>(false);
   const [error,            setError]            = useState<string>("");
   const [serverPort,       setServerPort]       = useState<number>(11434);
-  const [showDiagnostics,  setShowDiagnostics]  = useState<boolean>(false);
-  const [diagnosticCopied, setDiagnosticCopied] = useState<boolean>(false);
+  const [showSupport,      setShowSupport]      = useState<boolean>(false);
 
   const bottomRef     = useRef<HTMLDivElement | null>(null);
   const abortRef      = useRef<AbortController | null>(null);
@@ -265,41 +264,7 @@ export default function App() {
     ].join("\n");
   };
 
-  const copyDiagnostics = () => {
-    navigator.clipboard.writeText(generateDiagnosticText());
-    setDiagnosticCopied(true);
-    setTimeout(() => setDiagnosticCopied(false), 2000);
-  };
-
-  const fileBugReport = async () => {
-    const reportText = generateDiagnosticText();
-    const encodedBody = encodeURIComponent(
-      `## Describe the issue:\n[Write here]\n\n` +
-      `## Diagnostic Logs (auto-generated):\n\`\`\`markdown\n${reportText}\n\`\`\``
-    );
-    const url = `https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/issues/new?title=Installation%20Issue&body=${encodedBody}`;
-    try {
-      await openUrl(url);
-    } catch {
-      window.open(url, "_blank");
-    }
-  };
-
-  const openCommunityHub = async () => {
-    try {
-      await openUrl("https://discord.gg/kpZ3hWyAaq");
-    } catch {
-      window.open("https://discord.gg/kpZ3hWyAaq", "_blank");
-    }
-  };
-
-  const openFaqPage = async () => {
-    try {
-      await openUrl("https://lexsort.com/faq.html");
-    } catch {
-      window.open("https://lexsort.com/faq.html", "_blank");
-    }
-  };
+  // Support & Diagnostics are now fully managed by the SupportPanel component.
 
   // ── Render: Loading phases ─────────────────────────────────────────────────
   if (phase !== PHASE.READY) {
@@ -352,7 +317,7 @@ export default function App() {
             <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
               <button onClick={bootSequence} className="retry-btn">Retry Boot</button>
               <button
-                onClick={() => setShowDiagnostics(true)}
+                onClick={() => setShowSupport(true)}
                 className="retry-btn"
                 style={{ background: "transparent", border: "1px solid var(--border)", color: "var(--text)" }}
               >
@@ -360,43 +325,22 @@ export default function App() {
               </button>
             </div>
             <p style={{ marginTop: "20px", fontSize: "12px" }}>
-              Need help? Read our{" "}
-              <span onClick={openFaqPage} style={{ color: "var(--accent)", cursor: "pointer", textDecoration: "underline" }}>
-                Troubleshooting Guide
-              </span>
-              {" "}or join the{" "}
-              <span onClick={openCommunityHub} style={{ color: "var(--accent)", cursor: "pointer", textDecoration: "underline" }}>
-                Discord Community
+              Need help? Open our{" "}
+              <span onClick={() => setShowSupport(true)} style={{ color: "var(--accent)", cursor: "pointer", textDecoration: "underline" }}>
+                Support & Community Portal
               </span>.
             </p>
           </div>
         )}
 
-        {/* Diagnostic Modal in boot screen */}
-        {showDiagnostics && (
-          <div className="diagnostic-modal-overlay">
-            <div className="diagnostic-modal">
-              <h3>Sovereign Diagnostic Utility</h3>
-              <p>Verify your hardware configuration and local server status below. You can copy this report to paste into community help boards or file an issue.</p>
-              <div className="diagnostic-code">
-                {generateDiagnosticText()}
-              </div>
-              <div className="diagnostic-buttons">
-                <button onClick={copyDiagnostics} className="diagnostic-btn diagnostic-btn-secondary">
-                  {diagnosticCopied ? "✓ Copied!" : "Copy Report"}
-                </button>
-                <button onClick={fileBugReport} className="diagnostic-btn diagnostic-btn-primary">
-                  File Bug Report
-                </button>
-                <button onClick={openFaqPage} className="diagnostic-btn diagnostic-btn-secondary">
-                  Help FAQ
-                </button>
-                <button onClick={() => setShowDiagnostics(false)} className="diagnostic-btn diagnostic-btn-secondary" style={{ flex: "0 0 auto" }}>
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
+        {/* Support Panel in boot screen */}
+        {showSupport && (
+          <SupportPanel
+            onClose={() => setShowSupport(false)}
+            appName="VERA Freeware"
+            diagnosticText={generateDiagnosticText()}
+            isPro={false}
+          />
         )}
       </div>
     );
@@ -421,7 +365,7 @@ export default function App() {
           )}
           <span className="privacy-badge">● Private</span>
           <button
-            onClick={() => setShowDiagnostics(true)}
+            onClick={() => setShowSupport(true)}
             className="hdr-btn"
             style={{ borderColor: "var(--accent)", color: "var(--text)", fontWeight: 600 }}
           >
@@ -478,31 +422,14 @@ export default function App() {
         </button>
       </footer>
 
-      {/* Diagnostic Modal in Chat */}
-      {showDiagnostics && (
-        <div className="diagnostic-modal-overlay">
-          <div className="diagnostic-modal">
-            <h3>Sovereign Diagnostic Utility</h3>
-            <p>Verify your hardware configuration and local server status below. You can copy this report to paste into community help boards or file an issue.</p>
-            <div className="diagnostic-code">
-              {generateDiagnosticText()}
-            </div>
-            <div className="diagnostic-buttons">
-              <button onClick={copyDiagnostics} className="diagnostic-btn diagnostic-btn-secondary">
-                {diagnosticCopied ? "✓ Copied!" : "Copy Report"}
-              </button>
-              <button onClick={fileBugReport} className="diagnostic-btn diagnostic-btn-primary">
-                File Bug Report
-              </button>
-              <button onClick={openFaqPage} className="diagnostic-btn diagnostic-btn-secondary">
-                Help FAQ
-              </button>
-              <button onClick={() => setShowDiagnostics(false)} className="diagnostic-btn diagnostic-btn-secondary" style={{ flex: "0 0 auto" }}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Support Panel in Chat */}
+      {showSupport && (
+        <SupportPanel
+          onClose={() => setShowSupport(false)}
+          appName="VERA Freeware"
+          diagnosticText={generateDiagnosticText()}
+          isPro={false}
+        />
       )}
     </div>
   );
