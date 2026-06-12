@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LexSort Legal — Matter Intelligence for Law Firms</title>
+  <meta name="description" content="LexSort Legal runs entirely on your hardware. Every message, document, and communication — automatically matched to the right matter. No cloud. No compromise. Built for criminal defence." />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="LexSort Legal — Matter Intelligence for Law Firms" />
+  <meta property="og:description" content="Built for criminal defence. Bail hearings, Crown disclosure, client communications — organised before you open your laptop." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080a0c;
+      --surface: #0d1117;
+      --surface-raised: #101520;
+      --border: #1a2030;
+      --border-subtle: #111820;
+      --text-primary: #e8eaf0;
+      --text-secondary: #8892a4;
+      --text-muted: #3d4a5c;
+      --gold: #C9A84C;
+      --gold-bright: #d4b86a;
+      --gold-dim: rgba(201, 168, 76, 0.06);
+      --gold-border: rgba(201, 168, 76, 0.18);
+    }
+
+    html, body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border-subtle) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Announcement Banner ── */
+    .announcement-banner {
+      background: var(--gold-dim);
+      border-bottom: 1px solid var(--gold-border);
+      padding: 10px 24px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: 0.04em;
+      position: relative;
+      z-index: 20;
+    }
+
+    .announcement-banner a {
+      color: var(--gold);
+      text-decoration: underline;
+      margin-left: 6px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .announcement-banner a:hover {
+      color: #e8c26c;
+    }
+
+    /* ── Navigation ── */
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 48px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      border: 1.5px solid var(--gold);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-mark::before {
+      content: 'L';
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: -1px;
+    }
+
+    .logo-name {
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--text-primary);
+      text-transform: uppercase;
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-left: 2px;
+      opacity: 0.7;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-link {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text-secondary); }
+    .nav-link.active { color: var(--gold); }
+
+    /* ── Main ── */
+    main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      width: 100%;
+      padding: 96px 24px 80px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .eyebrow::before, .eyebrow::after {
+      content: '';
+      display: inline-block;
+      width: 28px;
+      height: 1px;
+      background: var(--gold-border);
+    }
+
+    h1 {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: clamp(38px, 6vw, 72px);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--text-primary);
+      max-width: 820px;
+      margin-bottom: 28px;
+      letter-spacing: -0.02em;
+    }
+
+    h1 em {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+
+    .hero-sub-2 {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.75;
+      font-style: italic;
+      margin-bottom: 48px;
+    }
+
+    .pilot-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 6px 16px;
+      border-radius: 2px;
+      margin-bottom: 28px;
+    }
+
+    .pilot-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid var(--gold-border);
+      padding: 14px 28px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .hero-cta:hover {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+    }
+
+    .hero-cta-arrow { transition: transform 0.2s; }
+    .hero-cta:hover .hero-cta-arrow { transform: translateX(4px); }
+
+    /* ── Section Wrapper ── */
+    .section-wrap {
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .divider {
+      width: 1px;
+      height: 64px;
+      background: linear-gradient(to bottom, transparent, var(--border), transparent);
+      margin: 0 auto;
+    }
+
+    .section-border {
+      border-top: 1px solid var(--border);
+      margin: 0 48px;
+    }
+
+    /* ── Features Section ── */
+    .features-section {
+      padding: 80px 24px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+      text-align: center;
+    }
+
+    .section-sub {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      max-width: 520px;
+      line-height: 1.75;
+      margin-bottom: 56px;
+      text-align: center;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1px;
+      width: 100%;
+      max-width: 960px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .feature-card {
+      background: var(--surface);
+      padding: 32px 28px;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .feature-card:hover { background: var(--surface-raised); }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 2px; height: 100%;
+      background: var(--gold-border);
+      transition: background 0.2s;
+    }
+
+    .feature-card:hover::before { background: var(--gold); }
+
+    .feature-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .feature-title {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* ── Co-Design Section ── */
+    .codesign-section {
+      padding: 80px 24px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-top: 1px solid var(--border);
+    }
+
+    .codesign-card {
+      width: 100%;
+      max-width: 860px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      padding: 52px 56px;
+      position: relative;
+    }
+
+    .codesign-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+    }
+
+    .codesign-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .codesign-card h2 {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: clamp(26px, 3.5vw, 38px);
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
+      text-align: left;
+    }
+
+    .codesign-body {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 36px;
+      max-width: 620px;
+    }
+
+    .practice-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 36px;
+    }
+
+    .practice-tag {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 2px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .practice-tag:hover {
+      border-color: var(--gold-border);
+      color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .codesign-note {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .codesign-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid var(--gold-border);
+      padding: 14px 28px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .codesign-cta:hover {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+    }
+
+    .codesign-cta-arrow { transition: transform 0.2s; }
+    .codesign-cta:hover .codesign-cta-arrow { transform: translateX(4px); }
+
+    /* ── Quote ── */
+    .quote-section {
+      padding: 64px 24px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      width: 100%;
+    }
+
+    .quote-text {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: clamp(18px, 3vw, 24px);
+      font-style: italic;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 580px;
+      margin: 0 auto 12px;
+    }
+
+    .quote-attr {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 22px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-left {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .footer-right {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .footer-right a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-right a:hover { color: var(--text-secondary); }
+
+    @media (max-width: 768px) {
+      header { padding: 18px 24px; }
+      nav { gap: 20px; }
+      .codesign-card { padding: 36px 28px; }
+      footer { padding: 18px 24px; flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="announcement-banner">
+    ⚡ Experience the LexSort intake & triage pipeline in real time. <a href="/demo">Try the Interactive Live Demo &rarr;</a>
+  </div>
+
+  <header>
+    <a href="/" class="logo" aria-label="LexSort Home">
+      <div class="logo-mark" aria-hidden="true"></div>
+      <span class="logo-name">LexSort</span>
+      <span class="logo-sub">Legal</span>
+    </a>
+    <nav>
+      <a href="/legal" class="nav-link active">Legal</a>
+      <a href="/core" class="nav-link">Core</a>
+      <a href="/demo" class="nav-link">Live Demo</a>
+      <a href="/partner.html" class="nav-link">Partner</a>
+      <a href="mailto:william@lexsort.com" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <p class="eyebrow">Matter Intelligence for Law Firms</p>
+
+      <h1>Every message. Every document.<br /><em>Already sorted when you arrive.</em></h1>
+
+      <p class="hero-sub">
+        LexSort Legal runs entirely on your hardware. Every message, document, and communication
+        — automatically matched to the right matter. No cloud. No compromise.
+      </p>
+
+      <p class="hero-sub-2">
+        Built for criminal defence. Bail hearings, Crown disclosure, client communications
+        — organised before you open your laptop.
+      </p>
+
+      <div class="pilot-badge">
+        <div class="pilot-dot"></div>
+        Private Pilot &mdash; Invitation Only
+      </div>
+
+      <a href="mailto:william@lexsort.com?subject=LexSort%20Legal%20Pilot%20Access" class="hero-cta" id="legal-pilot-cta">
+        Inquire About Access <span class="hero-cta-arrow">→</span>
+      </a>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section">
+      <p class="section-label">What It Does</p>
+      <h2>Intelligence built around the matter.</h2>
+      <p class="section-sub">
+        LexSort Legal reads your workflow and organises every communication, document, and deadline into the right matter — automatically.
+      </p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <p class="feature-label">Core Capability</p>
+          <p class="feature-title">Matter Intelligence</p>
+          <p class="feature-desc">Every email, document, and communication automatically routed to the correct matter. No tagging, no filing, no hunting.</p>
+        </div>
+        <div class="feature-card">
+          <p class="feature-label">Crown Disclosure</p>
+          <p class="feature-title">Disclosure Organization</p>
+          <p class="feature-desc">Crown briefs parsed, indexed, and searchable by matter, date, witness, and exhibit — before the hearing starts.</p>
+        </div>
+        <div class="feature-card">
+          <p class="feature-label">Client Comms</p>
+          <p class="feature-title">Communication Matching</p>
+          <p class="feature-desc">Client calls, messages, and emails matched to their matter instantly. Full communication history, organized and searchable.</p>
+        </div>
+        <div class="feature-card">
+          <p class="feature-label">Scheduling</p>
+          <p class="feature-title">Bail Hearing Tracking</p>
+          <p class="feature-desc">Upcoming hearings, deadlines, and appearances surfaced automatically. Nothing gets missed. Nothing needs a follow-up call.</p>
+        </div>
+        <div class="feature-card">
+          <p class="feature-label">Architecture</p>
+          <p class="feature-title">Entirely On Your Hardware</p>
+          <p class="feature-desc">No API calls to third-party models. No vendor access. No data leaving the building. Solicitor-client privilege is preserved by design.</p>
+        </div>
+        <div class="feature-card">
+          <p class="feature-label">Access</p>
+          <p class="feature-title">Private Pilot Program</p>
+          <p class="feature-desc">Currently in private pilot with Ontario criminal defence firms. Access is by direct invitation. Write to us to begin the conversation.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Co-Design Section -->
+    <section class="codesign-section">
+      <div class="codesign-card">
+        <p class="codesign-eyebrow">Co-Design Program</p>
+        <h2>Built with practitioners, not around them.</h2>
+        <p class="codesign-body">
+          LexSort Legal is expanding beyond criminal defence. We're looking for working lawyers
+          in other fields to co-design domain-specific versions with us. Your practice has workflows
+          that generic software never captures. We want to build around your actual reality.
+        </p>
+
+        <div class="practice-grid">
+          <span class="practice-tag">Injury Law</span>
+          <span class="practice-tag">Real Estate</span>
+          <span class="practice-tag">Intellectual Property</span>
+          <span class="practice-tag">Family Law</span>
+          <span class="practice-tag">Employment Law</span>
+          <span class="practice-tag">Estate Planning</span>
+          <span class="practice-tag">Corporate / Commercial</span>
+          <span class="practice-tag">Immigration</span>
+        </div>
+
+        <p class="codesign-note">
+          No code required. Just your knowledge of how your practice actually runs.
+          We handle the engineering. You define the workflow.
+        </p>
+
+        <a href="mailto:william@lexsort.com?subject=LexSort%20Co-Design%20Application&body=Practice%20area%3A%20%0AYears%20of%20experience%3A%20%0AFirm%20size%3A%20%0AWhat%20software%20do%20you%20currently%20use%3F%20%0AWhat%20is%20the%20biggest%20pain%20point%20in%20your%20current%20workflow%3F%20" class="codesign-cta" id="codesign-apply-cta">
+          Apply to Co-Design <span class="codesign-cta-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Quote -->
+    <section class="quote-section">
+      <p class="quote-text">"The software is built for the future. We're waiting for the hardware to catch up — and that wait is measured in months, not decades."</p>
+      <p class="quote-attr">— William Commu, Founder</p>
+    </section>
+
+  </main>
+
+  <footer>
+    <span class="footer-left">LexSort Inc. &nbsp;&middot;&nbsp; Minesing, Ontario &nbsp;&middot;&nbsp; © 2026</span>
+    <span class="footer-right"><a href="mailto:william@lexsort.com">william@lexsort.com</a></span>
+  </footer>
+
+</body>
+</html>

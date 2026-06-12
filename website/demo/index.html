@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LexSort Live Demo — Interactive Intake Portal</title>
+  <meta name="description" content="Experience LexSort's standalone client intake, automatic conflict checks, and practice management safeguards in real time." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080a0c;
+      --surface: #0d1117;
+      --surface-raised: #111622;
+      --border: #1a2030;
+      --border-subtle: #111820;
+      --text-primary: #e8eaf0;
+      --text-secondary: #8892a4;
+      --text-muted: #3d4a5c;
+      --gold: #C9A84C;
+      --gold-dim: rgba(201, 168, 76, 0.08);
+      --gold-border: rgba(201, 168, 76, 0.2);
+      --green: #3a8a5c;
+      --green-bright: #4ab07a;
+      --green-dim: rgba(58, 138, 92, 0.08);
+      --green-border: rgba(58, 138, 92, 0.2);
+      --rose: #e15252;
+      --rose-dim: rgba(225, 82, 82, 0.08);
+      --rose-border: rgba(225, 82, 82, 0.2);
+      --indigo: #6366f1;
+      --indigo-dim: rgba(99, 102, 241, 0.08);
+      --indigo-border: rgba(99, 102, 241, 0.2);
+    }
+
+    html, body {
+      height: 100%;
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border-subtle) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Navigation ── */
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 48px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8, 10, 12, 0.8);
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      border: 1.5px solid var(--gold);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-mark::before {
+      content: 'L';
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: -1px;
+    }
+
+    .logo-name {
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--text-primary);
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-link {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text-secondary); }
+    .nav-link.active { color: var(--gold); }
+
+    /* ── Main Container ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── Hero / Intro ── */
+    .hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .trust-badges {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .trust-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(201, 168, 76, 0.05);
+      border: 1px solid var(--gold-border);
+      color: var(--gold);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .trust-badge.green {
+      background: var(--green-dim);
+      border-color: var(--green-border);
+      color: var(--green-bright);
+    }
+
+    .trust-badge.indigo {
+      background: var(--indigo-dim);
+      border-color: var(--indigo-border);
+      color: var(--indigo);
+    }
+
+    .hero h1 {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: clamp(32px, 5vw, 54px);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 em {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      max-width: 680px;
+      line-height: 1.6;
+      margin: 0 auto;
+    }
+
+    /* ── Demo Tabs ── */
+    .demo-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+    }
+
+    .demo-tab {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 12px 24px;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .demo-tab::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: transparent;
+      transition: background-color 0.25s;
+    }
+
+    .demo-tab:hover {
+      color: var(--text-secondary);
+    }
+
+    .demo-tab.active {
+      color: var(--gold);
+    }
+
+    .demo-tab.active::after {
+      background-color: var(--gold);
+    }
+
+    /* ── Tab Panels ── */
+    .demo-panel {
+      display: none;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .demo-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Layout Grid (Tab 1: Interactive) ── */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      position: relative;
+    }
+
+    .card-title {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 24px;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* ── Forms ── */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      background: #080a0c;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.15);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .submit-btn {
+      background: var(--gold);
+      color: #080a0c;
+      border: none;
+      border-radius: 4px;
+      padding: 14px 24px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .submit-btn:hover {
+      background: #d9b85c;
+    }
+
+    .submit-btn:active {
+      transform: scale(0.99);
+    }
+
+    /* Advanced Configuration Toggle */
+    .advanced-toggle {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .advanced-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
+    }
+
+    .advanced-label:hover {
+      color: var(--text-secondary);
+    }
+
+    .advanced-label input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
+    .api-url-input {
+      display: none;
+      margin-top: 12px;
+      animation: slideDown 0.2s ease-out forwards;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .helper-text {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* ── Logs & Terminal ── */
+    .terminal-container {
+      background: #050709;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+      font-family: Monaco, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      height: 240px;
+      overflow-y: auto;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      color: var(--text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2a3040;
+    }
+
+    .dot.red { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27c93f; }
+
+    .log-line {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 8px;
+      opacity: 0;
+      animation: lineFadeIn 0.3s ease-out forwards;
+    }
+
+    @keyframes lineFadeIn {
+      to { opacity: 1; }
+    }
+
+    .log-timestamp {
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .log-indicator {
+      flex-shrink: 0;
+    }
+
+    .log-indicator.success { color: var(--green-bright); }
+    .log-indicator.warning { color: #f59e0b; }
+    .log-indicator.error { color: var(--rose); }
+    .log-indicator.info { color: var(--indigo); }
+
+    .log-text {
+      color: var(--text-primary);
+      word-break: break-all;
+    }
+
+    .log-text.highlight {
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    /* ── Live Mockups (Interactive HTML previews) ── */
+    .mockup-container {
+      margin-top: 24px;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+
+    .mockup-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    /* Daily Brief Triage Card CSS */
+    .brief-triage-card {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      animation: cardAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes cardAppear {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .card-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .source-badge {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--indigo);
+      background: var(--indigo-dim);
+      border: 1px solid var(--indigo-border);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .conflict-badge {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .conflict-badge.clear {
+      color: var(--green-bright);
+      background: var(--green-dim);
+      border: 1px solid var(--green-border);
+    }
+
+    .conflict-badge.flagged {
+      color: var(--rose);
+      background: var(--rose-dim);
+      border: 1px solid var(--rose-border);
+      animation: pulseGlow 1.5s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0px rgba(225, 82, 82, 0.2); }
+      50% { box-shadow: 0 0 0 4px rgba(225, 82, 82, 0.2); }
+    }
+
+    .inquiry-name {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 20px;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .inquiry-details {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .inquiry-message {
+      font-size: 13px;
+      color: var(--text-secondary);
+      background: #080a0c;
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .action-btn {
+      flex: 1;
+      border-radius: 4px;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .action-btn.primary {
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-border);
+      color: var(--gold);
+    }
+
+    .action-btn.primary:hover {
+      background: var(--gold);
+      color: #080a0c;
+      border-color: var(--gold);
+    }
+
+    .action-btn.secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .action-btn.secondary:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    /* ── Metrics Grid ── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .metric-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── TAB 2: Walkthrough (Interactive Slider) ── */
+    .walkthrough-box {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .walkthrough-step {
+      display: none;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .walkthrough-step.active {
+      display: block;
+    }
+
+    .walkthrough-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    .walkthrough-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .walkthrough-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .walkthrough-dot.active {
+      background: var(--gold);
+    }
+
+    .nav-btn {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--text-secondary);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* Step UI Mockups */
+    .ui-mockup {
+      background: #090c10;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-top: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    .ui-mockup-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    /* Step 2 mockup */
+    .timeline-mockup {
+      border-left: 2px solid var(--border);
+      padding-left: 18px;
+      margin-left: 10px;
+    }
+
+    .timeline-node {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .timeline-node::before {
+      content: '';
+      position: absolute;
+      left: -23px;
+      top: 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      border: 2px solid #090c10;
+    }
+
+    .timeline-node.highlight::before {
+      background: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.2);
+    }
+
+    .node-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .node-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* Step 3 mockup */
+    .brief-mockup {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 20px;
+      min-height: 220px;
+    }
+
+    .sidebar-mock {
+      border-right: 1px solid var(--border);
+      padding-right: 16px;
+    }
+
+    .side-item {
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      border-radius: 4px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .side-item.active {
+      background: var(--gold-dim);
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .main-brief-mock {
+      padding-left: 10px;
+    }
+
+    .alerts-section-mock {
+      border: 1px solid var(--rose-border);
+      background: var(--rose-dim);
+      border-radius: 6px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .alert-title-mock {
+      color: var(--rose);
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .alert-desc-mock {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ── TAB 3: FEATURE OVERVIEW PANEL ── */
+    .gallery-container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 680px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .gallery-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .gallery-item:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .gallery-preview-box {
+      background: #090c10;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gallery-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-border);
+      color: var(--gold);
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .gallery-title {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 18px;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .gallery-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Modal for Fullscreen Gallery View */
+    .gallery-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 10, 12, 0.95);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      backdrop-filter: blur(10px);
+    }
+
+    .gallery-modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      max-width: 800px;
+      width: 100%;
+      padding: 32px;
+      position: relative;
+      animation: modalZoom 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes modalZoom {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-mockup {
+      background: #090c10;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 20px;
+      min-height: 280px;
+    }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 10;
+      padding: 22px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: #080a0c;
+    }
+
+    .footer-left, .footer-right {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .footer-right a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    /* Preset buttons styling */
+    .preset-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .preset-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .preset-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      background: #080a0c;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .preset-btn.active {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="logo" aria-label="LexSort Home">
+      <div class="logo-mark" aria-hidden="true"></div>
+      <span class="logo-name">LexSort</span>
+    </a>
+    <nav>
+      <a href="/legal" class="nav-link">Legal</a>
+      <a href="/core" class="nav-link">Core</a>
+      <a href="/demo" class="nav-link active">Live Demo</a>
+      <a href="/partner.html" class="nav-link">Partner</a>
+      <a href="mailto:william@lexsort.com" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Header -->
+    <div class="hero">
+      <div class="trust-badges">
+        <span class="trust-badge">🔒 Sovereign Data Storage</span>
+        <span class="trust-badge green">⚡ Real-Time Webhook Pipeline</span>
+        <span class="trust-badge indigo">🤖 Conflict Resolution Engine</span>
+      </div>
+      <h1>Intake to Triage in <em>6 Seconds</em></h1>
+      <p class="hero-sub">
+        Experience LexSort's intake pipeline, automatic conflict checks, and safeguards. 
+        Submit a simulated client inquiry below and watch it process in real time.
+      </p>
+    </div>
+
+    <!-- Tab Buttons -->
+    <div class="demo-tabs">
+      <button class="demo-tab active" onclick="switchTab('interactive')">🚀 Interactive Demo</button>
+      <button class="demo-tab" onclick="switchTab('walkthrough')">🎬 Guided Walkthrough</button>
+      <button class="demo-tab" onclick="switchTab('gallery')">📸 Feature Overview</button>
+    </div>
+
+    <!-- TAB 1: INTERACTIVE DEMO PANEL -->
+    <div class="demo-panel active" id="interactive-panel">
+      <div class="demo-grid">
+        <!-- Form Column -->
+        <div class="card">
+          <h2 class="card-title">Client Intake Web Portal</h2>
+          <p class="card-subtitle">
+            Submit an inquiry as a prospective client. This simulates a website form entry, iMessage, or email arrival.
+          </p>
+
+          <form id="intakeForm" onsubmit="handleFormSubmit(event)">
+            <div class="preset-row">
+              <span class="preset-label">⚡ Quick Demo Scenarios</span>
+              <div class="preset-buttons">
+                <button type="button" class="preset-btn active" id="btnPresetStandard" onclick="applyPreset('standard')">📋 Default Intake</button>
+                <button type="button" class="preset-btn" id="btnPresetConflict" onclick="applyPreset('conflict')">⚠️ Conflict Trigger</button>
+                <button type="button" class="preset-btn" id="btnPresetFamily" onclick="applyPreset('family')">🤝 Family Law</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="clientName">Full Name *</label>
+              <input type="text" id="clientName" placeholder="Jane Miller" value="Jane Miller" required />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="clientEmail">Email Address</label>
+                <input type="email" id="clientEmail" placeholder="jane.m@example.com" value="jane.miller@example.com" />
+              </div>
+              <div class="form-group">
+                <label for="clientPhone">Phone Number</label>
+                <input type="tel" id="clientPhone" placeholder="416-555-0199" value="416-555-0199" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="caseType">Practice Area</label>
+              <select id="caseType">
+                <option value="Criminal">Criminal Defence</option>
+                <option value="Family">Family Law</option>
+                <option value="Civil">Civil Litigation</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="messageText">Intake message details *</label>
+              <textarea id="messageText" rows="4" placeholder="I was scheduled for an appearance on June 12, 2025. Curfew and surety conditions apply. Need immediate legal representation." required>I was scheduled for an appearance on June 12, 2025. Curfew and surety conditions apply. Need immediate legal representation.</textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Simulate Intake Pipeline</button>
+
+            <!-- Advanced Custom API configuration -->
+            <div class="advanced-toggle">
+              <label class="advanced-label">
+                <input type="checkbox" id="advancedMode" /> 🔧 Advanced: Custom API Endpoint
+              </label>
+              <div id="apiUrlInput" class="api-url-input">
+                <input type="text" id="customApiUrl" placeholder="http://localhost:58732" value="http://localhost:58732" />
+                <small class="helper-text">Sends actual JSON payloads to a local LexSort instance or active ngrok tunnel.</small>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Telemetry Log & Output -->
+        <div class="card">
+          <h2 class="card-title">Pipeline Log Telemetry</h2>
+          <p class="card-subtitle">Detailed on-device execution steps from webhook trigger to database write.</p>
+
+          <div class="terminal-container" id="terminalLog">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+              </div>
+              <div>LexSort Ingest Console</div>
+            </div>
+            <div class="log-line">
+              <span class="log-timestamp">--:--:--</span>
+              <span class="log-indicator info">⚙</span>
+              <span class="log-text">Intake listener online. Ready for form submission...</span>
+            </div>
+          </div>
+
+          <!-- Live Card Render -->
+          <div class="mockup-container" id="mockupContainer" style="display: none;">
+            <p class="mockup-title">Daily Brief Triage Dashboard Integration</p>
+            <div id="liveTriageCard"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value" id="metricTime">0.00s</div>
+          <div class="metric-label">Ingestion Latency</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="metricSteps">0</div>
+          <div class="metric-label">Automated Steps</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">40m</div>
+          <div class="metric-label">Admin Time Saved</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: GUIDED WALKTHROUGH PANEL -->
+    <div class="demo-panel" id="walkthrough-panel">
+      <div class="walkthrough-box">
+        
+        <!-- Step 1 -->
+        <div class="walkthrough-step active" id="wStep-1">
+          <h2 class="card-title">1. Client Ingestion</h2>
+          <p class="card-subtitle">
+            An intake inquiry arrives from your website form, SMS (chat.db sync), or email notice. 
+            The background sync daemon creates a "ghost inquiry" record instantly.
+          </p>
+          <div class="ui-mockup">
+            <div class="ui-mockup-header">📥 Intake Ingestion Event</div>
+            <div style="font-size: 13px; line-height: 1.6; color: var(--text-secondary);">
+              <div style="margin-bottom: 8px;"><strong>Source:</strong> Web portal (lexsort.com/contact)</div>
+              <div style="margin-bottom: 8px;"><strong>Client:</strong> John Miller</div>
+              <div style="margin-bottom: 8px;"><strong>Status:</strong> <span style="color: var(--gold); font-weight: 600;">pending_review</span></div>
+              <div style="padding: 10px; background: #050709; border: 1px solid var(--border); border-radius: 4px; font-family: monospace;">
+                "I was arrested on charges of fraud. Need representation."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="walkthrough-step" id="wStep-2">
+          <h2 class="card-title">2. Automated Conflict Checking</h2>
+          <p class="card-subtitle">
+            LexSort matches the contact details (name, email, phone) against existing active matters and historical contacts 
+            to identify conflicts matching Law Society Rules (LSO Rule 3.4-1).
+          </p>
+          <div class="ui-mockup">
+            <div class="ui-mockup-header">🔍 Conflict Check Report</div>
+            <div class="timeline-mockup">
+              <div class="timeline-node highlight">
+                <div class="node-header"><span>Step 2.1</span> <span style="color: var(--green-bright);">✓ Complete</span></div>
+                <div class="node-title">Matters Name Index Check</div>
+                <div style="font-size:11px; color: var(--text-muted); margin-top:2px;">Checked 142 historical matters. No matches.</div>
+              </div>
+              <div class="timeline-node highlight">
+                <div class="node-header"><span>Step 2.2</span> <span style="color: var(--green-bright);">✓ Complete</span></div>
+                <div class="node-title">Phone & Email Collision Check</div>
+                <div style="font-size:11px; color: var(--text-muted); margin-top:2px;">No contact details match current files. Status: CLEAR.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="walkthrough-step" id="wStep-3">
+          <h2 class="card-title">3. Daily Brief Triage</h2>
+          <p class="card-subtitle">
+            All pending intake events populate the lawyer's Daily Brief triage section. 
+            The lawyer can review detail scopes and accept with one click to auto-create active matters.
+          </p>
+          <div class="ui-mockup">
+            <div class="ui-mockup-header">👨⚖️ Daily Brief Interface</div>
+            <div class="brief-mockup">
+              <div class="sidebar-mock">
+                <div class="side-item active">📅 Daily Brief <span>1</span></div>
+                <div class="side-item">💼 Cases</div>
+                <div class="side-item">📈 Billing</div>
+              </div>
+              <div class="main-brief-mock">
+                <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">Pending Triage</div>
+                <div style="background: var(--surface-raised); border: 1px solid var(--border); padding: 14px; border-radius: 4px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                    <span style="font-weight:600; font-size:13px;">John Miller</span>
+                    <span class="conflict-badge clear">✓ Conflict Clear</span>
+                  </div>
+                  <div style="font-size:11px; color: var(--text-secondary); margin-bottom: 12px;">Assault - Ingested 2 hours ago</div>
+                  <div style="display:flex; gap: 8px;">
+                    <button class="action-btn primary" style="padding: 6px; font-size: 10px;">Accept & Convert</button>
+                    <button class="action-btn secondary" style="padding: 6px; font-size: 10px;">Discard</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="walkthrough-step" id="wStep-4">
+          <h2 class="card-title">4. Real-Time Billing Widget</h2>
+          <p class="card-subtitle">
+            An embedded widget monitors lawyer activity (reading documents, compiling briefs) 
+            and tracks weekly hours and revenue. Unreviewed slips are approved in batches and exported to PCLaw.
+          </p>
+          <div class="ui-mockup">
+            <div class="ui-mockup-header">💰 Billing Registry Overlay</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div style="border: 1px solid var(--border); padding: 14px; border-radius: 4px; text-align: center;">
+                <div style="font-size: 20px; font-weight:700; color: var(--green-bright);">8.4 hrs</div>
+                <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Weekly Hours</div>
+              </div>
+              <div style="border: 1px solid var(--border); padding: 14px; border-radius: 4px; text-align: center;">
+                <div style="font-size: 20px; font-weight:700; color: var(--green-bright);">$2,940</div>
+                <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Est. Revenue ($350/hr)</div>
+              </div>
+            </div>
+            <div style="margin-top: 14px; background: #050709; border: 1px solid var(--border); border-radius: 4px; padding: 10px; font-size: 11px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+                <span>• Document View (R. v. Miller)</span>
+                <span style="color: var(--green-bright);">+0.3 hrs</span>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>• Brief Compile (R. v. Davis)</span>
+                <span style="color: var(--green-bright);">+0.5 hrs</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="walkthrough-step" id="wStep-5">
+          <h2 class="card-title">5. Bail Brief Compiler & Safeguards</h2>
+          <p class="card-subtitle">
+            LexSort automatically extracts curfew, surety, and weapon clauses from disclosures 
+            and creates court notice warnings. A clean, printable PDF bail brief is generated instantly.
+          </p>
+          <div class="ui-mockup">
+            <div class="ui-mockup-header">📋 Bail Readiness Checklist</div>
+            <div style="font-size: 12px; space-y: 8px;">
+              <div style="margin-bottom: 6px;">🟢 <strong>Sureties:</strong> Mentioned ("surety conditions apply")</div>
+              <div style="margin-bottom: 6px;">🟢 <strong>Curfew:</strong> Mentioned ("curfew applies")</div>
+              <div style="margin-bottom: 6px;">🔴 <strong>Prior Orders:</strong> Not detected in notice file</div>
+              <div style="margin-bottom: 6px; padding: 10px; background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 4px; text-align: center; color: var(--gold); cursor: pointer; font-weight:600;">
+                🖨️ Print Bail Brief & Release Plan
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carousel Navigation -->
+        <div class="walkthrough-nav">
+          <button class="nav-btn" id="prevBtn" onclick="adjustWalkthrough(-1)" disabled>Previous</button>
+          <div class="walkthrough-dots">
+            <div class="walkthrough-dot active" onclick="gotoStep(1)"></div>
+            <div class="walkthrough-dot" onclick="gotoStep(2)"></div>
+            <div class="walkthrough-dot" onclick="gotoStep(3)"></div>
+            <div class="walkthrough-dot" onclick="gotoStep(4)"></div>
+            <div class="walkthrough-dot" onclick="gotoStep(5)"></div>
+          </div>
+          <button class="nav-btn" id="nextBtn" onclick="adjustWalkthrough(1)">Next</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: FEATURE OVERVIEW PANEL -->
+    <div class="demo-panel" id="gallery-panel">
+      <div class="gallery-container">
+        <div class="gallery-grid">
+          
+          <div class="gallery-item" onclick="openModal('intake')">
+            <div class="gallery-preview-box">
+              <span class="gallery-tag">Intake</span>
+              <div style="font-size: 32px;">📥</div>
+            </div>
+            <h3 class="gallery-title">Ghost Inquiries</h3>
+            <p class="gallery-desc">Captures client intake, automatically checks conflicts, and holds inquiries in review stages.</p>
+          </div>
+
+          <div class="gallery-item" onclick="openModal('billing')">
+            <div class="gallery-preview-box">
+              <span class="gallery-tag">Billing</span>
+              <div style="font-size: 32px;">💰</div>
+            </div>
+            <h3 class="gallery-title">Billing Widget</h3>
+            <p class="gallery-desc">Tracks hourly rate revenue dynamically and generates PCLaw-compatible CSV exports.</p>
+          </div>
+
+          <div class="gallery-item" onclick="openModal('bail')">
+            <div class="gallery-preview-box">
+              <span class="gallery-tag">Bail</span>
+              <div style="font-size: 32px;">📋</div>
+            </div>
+            <h3 class="gallery-title">Bail Brief Compiler</h3>
+            <p class="gallery-desc">Scans disclosures for sureties, curfew, and generates print-ready HTML release plans.</p>
+          </div>
+
+          <div class="gallery-item" onclick="openModal('court')">
+            <div class="gallery-preview-box">
+              <span class="gallery-tag">Safeguard</span>
+              <div style="font-size: 32px;">⏰</div>
+            </div>
+            <h3 class="gallery-title">Deadline Safeguards</h3>
+            <p class="gallery-desc">Deterministic date extraction from court documents linked with Daily Brief alerts.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Interactive Mockup Modal -->
+  <div class="gallery-modal" id="galleryModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <h2 class="card-title" id="modalTitle">Feature Preview</h2>
+      <p class="card-subtitle" id="modalSubtitle">Details and specifications of this module.</p>
+      
+      <div class="modal-mockup" id="modalMockup"></div>
+      
+      <div style="text-align: right;">
+        <button class="nav-btn" onclick="closeModal()">Close Preview</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo Action Modal -->
+  <div class="gallery-modal" id="actionModal">
+    <div class="modal-content" style="max-width: 540px;">
+      <button class="modal-close" onclick="closeActionModal()">&times;</button>
+      <h2 class="card-title" id="actionModalTitle">Action Completed</h2>
+      <p class="card-subtitle" id="actionModalSubtitle">What happens inside LexSort under the hood.</p>
+      
+      <div class="modal-mockup" id="actionModalContent" style="min-height: auto; margin-bottom: 24px; text-align: left; padding: 24px;">
+        <!-- Filled dynamically -->
+      </div>
+      
+      <div style="text-align: right;">
+        <button class="submit-btn" style="width: auto; padding: 10px 24px;" onclick="closeActionModal()">Acknowledge & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="footer-left">LexSort Inc. &nbsp;&middot;&nbsp; Minesing, Ontario &nbsp;&middot;&nbsp; © 2026</span>
+    <span class="footer-right"><a href="mailto:william@lexsort.com">william@lexsort.com</a></span>
+  </footer>
+
+  <script>
+    // Tab switching
+    function switchTab(tabName) {
+      document.querySelectorAll('.demo-tab').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.demo-panel').forEach(panel => panel.classList.remove('active'));
+      
+      if (tabName === 'interactive') {
+        document.querySelector('.demo-tab:nth-child(1)').classList.add('active');
+        document.getElementById('interactive-panel').classList.add('active');
+      } else if (tabName === 'walkthrough') {
+        document.querySelector('.demo-tab:nth-child(2)').classList.add('active');
+        document.getElementById('walkthrough-panel').classList.add('active');
+      } else if (tabName === 'gallery') {
+        document.querySelector('.demo-tab:nth-child(3)').classList.add('active');
+        document.getElementById('gallery-panel').classList.add('active');
+      }
+    }
+
+    // Toggle advanced mode URL input
+    document.getElementById('advancedMode').addEventListener('change', (e) => {
+      document.getElementById('apiUrlInput').style.display = e.target.checked ? 'block' : 'none';
+    });
+
+    // Walkthrough slider logic
+    let currentStep = 1;
+    function gotoStep(step) {
+      document.querySelectorAll('.walkthrough-step').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.walkthrough-dot').forEach(d => d.classList.remove('active'));
+      
+      document.getElementById(`wStep-${step}`).classList.add('active');
+      document.querySelector(`.walkthrough-dots .walkthrough-dot:nth-child(${step})`).classList.add('active');
+      
+      currentStep = step;
+      document.getElementById('prevBtn').disabled = (currentStep === 1);
+      document.getElementById('nextBtn').disabled = (currentStep === 5);
+    }
+
+    function adjustWalkthrough(delta) {
+      const target = currentStep + delta;
+      if (target >= 1 && target <= 5) {
+        gotoStep(target);
+      }
+    }
+
+    // Interactive simulator code
+    let activeTimer = null;
+    let logSteps = 0;
+
+    function formatTimeNow() {
+      const now = new Date();
+      return now.toTimeString().split(' ')[0];
+    }
+
+    function addLogLine(text, type = 'success', delay = 0) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const terminal = document.getElementById('terminalLog');
+          const line = document.createElement('div');
+          line.className = 'log-line';
+          
+          let icon = '✓';
+          if (type === 'warning') icon = '⚠️';
+          if (type === 'error') icon = '✗';
+          if (type === 'info') icon = '⚙';
+
+          line.innerHTML = `
+            <span class="log-timestamp">${formatTimeNow()}</span>
+            <span class="log-indicator ${type}">${icon}</span>
+            <span class="log-text ${type === 'info' ? 'highlight' : ''}">${text}</span>
+          `;
+          terminal.appendChild(line);
+          terminal.scrollTop = terminal.scrollHeight;
+          logSteps++;
+          document.getElementById('metricSteps').innerText = logSteps;
+          resolve();
+        }, delay);
+      });
+    }
+
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Processing Intake...';
+      
+      const clientName = document.getElementById('clientName').value;
+      const clientEmail = document.getElementById('clientEmail').value;
+      const clientPhone = document.getElementById('clientPhone').value;
+      const caseType = document.getElementById('caseType').value;
+      const messageText = document.getElementById('messageText').value;
+      
+      // Clear logs & reset metrics
+      const terminal = document.getElementById('terminalLog');
+      // Keep only headers
+      terminal.innerHTML = `
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+          </div>
+          <div>LexSort Ingest Console</div>
+        </div>
+      `;
+      logSteps = 0;
+      document.getElementById('metricSteps').innerText = '0';
+      document.getElementById('metricTime').innerText = '0.00s';
+      document.getElementById('mockupContainer').style.display = 'none';
+
+      const startTime = Date.now();
+      let timer = setInterval(() => {
+        const diff = ((Date.now() - startTime) / 1000).toFixed(2);
+        document.getElementById('metricTime').innerText = `${diff}s`;
+      }, 30);
+
+      // Determine URL
+      const isAdvanced = document.getElementById('advancedMode').checked;
+      const baseUrl = isAdvanced ? document.getElementById('customApiUrl').value.trim() : '';
+      const endpoint = (baseUrl || 'http://localhost:58732') + '/api/pre-engagement/webhook';
+
+      await addLogLine(`🚀 Ingestion initiated for client name: ${clientName}`, 'info', 100);
+
+      let apiSuccess = false;
+      let data = null;
+
+      if (isAdvanced || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Try real API call
+        await addLogLine(`📡 Dispatching HTTP POST request to: ${endpoint}`, 'info', 100);
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              client_name: clientName,
+              client_email: clientEmail || null,
+              client_phone: clientPhone || null,
+              message: messageText,
+              matter_type: caseType
+            }),
+            signal: AbortSignal.timeout(3000) // Timeout after 3s
+          });
+          
+          if (res.ok) {
+            data = await res.json();
+            apiSuccess = true;
+            await addLogLine(`✓ Received API code ${res.status}. Database entry complete.`, 'success', 200);
+          } else {
+            await addLogLine(`⚠️ Endpoint returned code ${res.status}. Falling back to simulation...`, 'warning', 200);
+          }
+        } catch (err) {
+          await addLogLine(`⚠️ Webhook route unavailable: ${err.message}. Initializing simulator...`, 'warning', 200);
+        }
+      } else {
+        await addLogLine(`💡 Standing environment is offline. Deploying simulated on-device fallback.`, 'info', 200);
+      }
+
+      if (!apiSuccess) {
+        // Simulated workflow steps
+        await addLogLine('⚙ Simulating webhook queue buffering...', 'info', 400);
+        
+        // Conflict Check Simulation
+        await addLogLine('🔍 Querying local index (LSO Rule 3.4-1 check)...', 'info', 500);
+        const hasConflict = clientName.toLowerCase().includes('conflict') || clientName.toLowerCase().includes('miller');
+        if (hasConflict) {
+          await addLogLine(`⚠️ CONFLICT FOUND: Match detected with existing contact record.`, 'warning', 600);
+        } else {
+          await addLogLine(`✓ Conflict check: CLEAR. No collisions found.`, 'success', 600);
+        }
+
+        // Write Inquiry Sim
+        const randomId = Math.floor(Math.random() * 8000) + 1000;
+        await addLogLine(`✓ Pre-engagement inquiry #${randomId} written to DB status: 'pending_review'`, 'success', 500);
+        await addLogLine('👨⚖️ DAILY BRIEF injection complete.', 'success', 400);
+        
+        data = {
+          inquiry_id: randomId,
+          conflict_check_status: hasConflict ? 'flagged' : 'clear'
+        };
+      }
+
+      clearInterval(timer);
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Simulate Intake Pipeline';
+      
+      const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+      document.getElementById('metricTime').innerText = `${totalTime}s`;
+      await addLogLine(`✨ Ingest completed successfully in ${totalTime} seconds.`, 'success', 100);
+
+      // Render the Live Mockup Triage Card
+      const cardContainer = document.getElementById('liveTriageCard');
+      const hasConflict = data.conflict_check_status === 'flagged';
+      
+      cardContainer.innerHTML = `
+        <div class="brief-triage-card">
+          <div class="card-badge-row">
+            <span class="source-badge">🌐 Web Intake</span>
+            <span class="conflict-badge ${hasConflict ? 'flagged' : 'clear'}">
+              ${hasConflict ? '⚠️ Conflict Flagged' : '✓ Conflict Clear'}
+            </span>
+          </div>
+          <div class="inquiry-name">${clientName}</div>
+          <div class="inquiry-details">
+            <span>✉️ ${clientEmail || 'no email'}</span>
+            <span>📞 ${clientPhone || 'no phone'}</span>
+          </div>
+          <div class="inquiry-message">
+            "${messageText}"
+          </div>
+          <div class="card-actions">
+            <button class="action-btn primary" onclick="showActionModal('accept', '${clientName.replace(/'/g, "\\'")}', '${clientEmail.replace(/'/g, "\\'")}', '${clientPhone.replace(/'/g, "\\'")}')">Accept & Convert</button>
+            <button class="action-btn secondary" onclick="showActionModal('review', '${clientName.replace(/'/g, "\\'")}', '${clientEmail.replace(/'/g, "\\'")}', '${clientPhone.replace(/'/g, "\\'")}')">Review</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('mockupContainer').style.display = 'block';
+    }
+
+    // Modal previews for Feature Gallery
+    function openModal(feature) {
+      const modal = document.getElementById('galleryModal');
+      const title = document.getElementById('modalTitle');
+      const subtitle = document.getElementById('modalSubtitle');
+      const mockup = document.getElementById('modalMockup');
+
+      modal.classList.add('active');
+
+      if (feature === 'intake') {
+        title.innerText = 'Intake Queue & Triage';
+        subtitle.innerText = 'Central dashboard for processing new inquiries and incoming communication pipelines.';
+        mockup.innerHTML = `
+          <div style="font-family: monospace; font-size: 12px; color: var(--text-secondary); space-y: 12px;">
+            <div style="color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px;">SELECT * FROM pre_engagement_inquiries WHERE status = 'pending_review';</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+              <span>1. Jane Doe (Email - Clear)</span>
+              <span style="color:var(--gold);">[Review details]</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+              <span>2. Alan Miller (iMessage - Flagged)</span>
+              <span style="color:var(--rose);">[Conflict Alert]</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>3. Robert Davis (Phone Ingestion - Clear)</span>
+              <span style="color:var(--gold);">[Review details]</span>
+            </div>
+          </div>
+        `;
+      } else if (feature === 'billing') {
+        title.innerText = 'Sovereign Billing Widget';
+        subtitle.innerText = 'Real-time billing slips logged on-device with zero-telemetry cloud exposure.';
+        mockup.innerHTML = `
+          <div style="font-family: monospace; font-size: 12px; color: var(--text-secondary);">
+            <div style="color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px;">Weekly Captured Revenue Summary</div>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <th style="text-align:left; padding: 6px 0;">Activity</th>
+                <th style="text-align:right; padding: 6px 0;">Duration</th>
+                <th style="text-align:right; padding: 6px 0;">Amt</th>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0;">Read Disclosure</td>
+                <td style="text-align:right;">1.2 hrs</td>
+                <td style="text-align:right; color: var(--green-bright);">$420.00</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0;">Bail Brief Compile</td>
+                <td style="text-align:right;">0.5 hrs</td>
+                <td style="text-align:right; color: var(--green-bright);">$175.00</td>
+              </tr>
+            </table>
+          </div>
+        `;
+      } else if (feature === 'bail') {
+        title.innerText = 'Bail Brief Auto-Compiler';
+        subtitle.innerText = 'Automatically compiles checklists and formats release briefs from raw files.';
+        mockup.innerHTML = `
+          <div style="border: 1px solid var(--border); border-radius: 6px; padding: 14px; background: #050709;">
+            <div style="font-weight: 600; font-size: 14px; margin-bottom: 10px; text-align: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+              BAIL BRIEF: R. v. MILLER
+            </div>
+            <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">
+              • <strong>Defense Release Proposal:</strong> Residential sureties supervising curfew from 9:00 PM to 6:00 AM.<br/>
+              • <strong>Identified Sureties:</strong> Mary Miller (Mother) - Equity: $50,000.<br/>
+              • <strong>Identified Conditions:</strong> Curfew matches, Weapons ban accepted.
+            </div>
+          </div>
+        `;
+      } else if (feature === 'court') {
+        title.innerText = 'Deadline Safeguards';
+        subtitle.innerText = 'Automatic court date parsing that populates Daily Brief alerts.';
+        mockup.innerHTML = `
+          <div style="border: 1px solid var(--rose-border); background: var(--rose-dim); border-radius: 6px; padding: 14px;">
+            <div style="color: var(--rose); font-weight: 600; font-size: 12px; margin-bottom: 4px;">🚨 Court Date Safeguard Alert: OVERDUE</div>
+            <div style="font-size: 12px; color: var(--text-primary); margin-bottom: 8px;">
+              Target Date: <strong>June 12, 2025</strong> (Appearance deadline)
+            </div>
+            <div style="font-size: 11px; color: var(--text-secondary);">
+              Notice extracted from: <em>court_notice.txt</em>. Click Acknowledge to sync calendar status.
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('galleryModal').classList.remove('active');
+    }
+
+    function closeActionModal() {
+      document.getElementById('actionModal').classList.remove('active');
+    }
+
+    function showActionModal(type, clientName, clientEmail, clientPhone) {
+      const modal = document.getElementById('actionModal');
+      const title = document.getElementById('actionModalTitle');
+      const subtitle = document.getElementById('actionModalSubtitle');
+      const content = document.getElementById('actionModalContent');
+      
+      modal.classList.add('active');
+      
+      if (type === 'accept') {
+        title.innerText = '✓ Matter Conversion Successful';
+        subtitle.innerText = 'How LexSort automates client-to-matter ingestion:';
+        content.innerHTML = `
+          <div style="font-size: 13px; line-height: 1.6; color: var(--text-secondary); display: flex; flex-direction: column; gap: 14px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; color: var(--green-bright); font-weight: 600; font-size: 13px; margin-bottom: 4px;">
+                <span style="font-size: 14px;">🟢</span> Active Matter Case File Created
+              </div>
+              <div style="padding-left: 24px; color: var(--text-secondary);">
+                Inserts a new matter entry in the local SQLite database: <code>Matter - ${clientName}</code>.
+              </div>
+            </div>
+            
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; color: var(--green-bright); font-weight: 600; font-size: 13px; margin-bottom: 4px;">
+                <span style="font-size: 14px;">🟢</span> Client Contact Indexed & Secured
+              </div>
+              <div style="padding-left: 24px; color: var(--text-secondary);">
+                Name, email (<code>${clientEmail || 'None'}</code>), and phone (<code>${clientPhone || 'None'}</code>) are registered to the contact registry.
+              </div>
+            </div>
+            
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; color: var(--green-bright); font-weight: 600; font-size: 13px; margin-bottom: 4px;">
+                <span style="font-size: 14px;">🟢</span> Ingestion History Migration
+              </div>
+              <div style="padding-left: 24px; color: var(--text-secondary);">
+                All pre-engagement emails, portal messages, and attachments are moved to the permanent case timeline.
+              </div>
+            </div>
+            
+            <div style="margin-top: 10px; padding: 12px; background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 6px; color: var(--gold); font-size: 11px; line-height: 1.5;">
+              <strong>💡 Live App Integration:</strong> LexSort immediately redirects the lawyer to the newly created matter workdesk to start court deadline tracking, billing, and document assembly.
+            </div>
+          </div>
+        `;
+      } else if (type === 'review') {
+        title.innerText = '🔍 Sent to Triage Board';
+        subtitle.innerText = 'How LexSort manages partner validation queues:';
+        content.innerHTML = `
+          <div style="font-size: 13px; line-height: 1.6; color: var(--text-secondary); display: flex; flex-direction: column; gap: 14px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; color: var(--gold); font-weight: 600; font-size: 13px; margin-bottom: 4px;">
+                <span style="font-size: 14px;">🟡</span> Record Buffered in Review State
+              </div>
+              <div style="padding-left: 24px; color: var(--text-secondary);">
+                Keeps the prospect status as <code>pending_review</code> inside the local sovereign database.
+              </div>
+            </div>
+            
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; color: var(--gold); font-weight: 600; font-size: 13px; margin-bottom: 4px;">
+                <span style="font-size: 14px;">🟡</span> Conflict Report Generated
+              </div>
+              <div style="padding-left: 24px; color: var(--text-secondary);">
+                Runs names against the Law Society conflicts index to highlight collisions before signing.
+              </div>
+            </div>
+            
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; color: var(--gold); font-weight: 600; font-size: 13px; margin-bottom: 4px;">
+                <span style="font-size: 14px;">🟡</span> Retainer Package Configured
+              </div>
+              <div style="padding-left: 24px; color: var(--text-secondary);">
+                Prepares DocuSign linkages or generates standard email draft hooks to deliver retainer terms.
+              </div>
+            </div>
+            
+            <div style="margin-top: 10px; padding: 12px; background: var(--indigo-dim); border: 1px solid var(--indigo-border); border-radius: 6px; color: var(--indigo); font-size: 11px; line-height: 1.5;">
+              <strong>💡 Live App Integration:</strong> LexSort routes the lawyer to the Pre-Engagement board to inspect specific conflict flags, customize fee structures, or draft retainer documents.
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Preset Scenarios data
+    const presets = {
+      standard: {
+        name: 'Jane Miller',
+        email: 'jane.miller@example.com',
+        phone: '416-555-0199',
+        type: 'Criminal',
+        message: 'I was scheduled for an appearance on June 12, 2025. Curfew and surety conditions apply. Need immediate legal representation.'
+      },
+      conflict: {
+        name: 'John Miller',
+        email: 'john.miller@example.com',
+        phone: '416-555-9999',
+        type: 'Criminal',
+        message: 'I need help with my scheduling conflict on R. v. Miller.'
+      },
+      family: {
+        name: 'Sarah Jenkins',
+        email: 'sarah.j@example.com',
+        phone: '647-555-0122',
+        type: 'Family',
+        message: 'Need assistance setting up a custody agreement modification hearing next month.'
+      }
+    };
+
+    function applyPreset(presetKey) {
+      const p = presets[presetKey];
+      if (!p) return;
+      
+      document.getElementById('clientName').value = p.name;
+      document.getElementById('clientEmail').value = p.email;
+      document.getElementById('clientPhone').value = p.phone;
+      document.getElementById('caseType').value = p.type;
+      document.getElementById('messageText').value = p.message;
+      
+      // Update active button state styling
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      if (presetKey === 'standard') document.getElementById('btnPresetStandard').classList.add('active');
+      if (presetKey === 'conflict') document.getElementById('btnPresetConflict').classList.add('active');
+      if (presetKey === 'family') document.getElementById('btnPresetFamily').classList.add('active');
+    }
+  </script>
+</body>
+</html>

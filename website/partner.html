@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LexSort — Partner & Co-Founder Inquiry</title>
+  <meta name="description" content="LexSort is seeking an experienced operator or co-founder in legal technology or enterprise software. Private pilot stage. Built local-first for law firms." />
+  <meta name="robots" content="index, follow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080a0c;
+      --surface: #0d1117;
+      --border: #1a2030;
+      --border-subtle: #111820;
+      --text-primary: #e8eaf0;
+      --text-secondary: #8892a4;
+      --text-muted: #3d4a5c;
+      --gold: #C9A84C;
+      --gold-dim: rgba(201, 168, 76, 0.06);
+      --gold-border: rgba(201, 168, 76, 0.18);
+      --accent: #C9A84C;
+      --accent-dim: rgba(201, 168, 76, 0.08);
+    }
+
+    html, body {
+      height: 100%;
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border-subtle) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Announcement Banner ── */
+    .announcement-banner {
+      background: var(--gold-dim);
+      border-bottom: 1px solid var(--gold-border);
+      padding: 10px 24px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: 0.04em;
+      position: relative;
+      z-index: 20;
+    }
+
+    .announcement-banner a {
+      color: var(--gold);
+      text-decoration: underline;
+      margin-left: 6px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .announcement-banner a:hover {
+      color: #e8c26c;
+    }
+
+    /* ── Header ── */
+    header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      border: 1.5px solid var(--gold);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-mark::before {
+      content: 'L';
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: -1px;
+    }
+
+    .logo-name {
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--text-primary);
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-link {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text-secondary); }
+
+    /* ── Main ── */
+    main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 96px 24px 80px;
+    }
+
+    /* ── Opening ── */
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: clamp(32px, 5vw, 54px);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text-primary);
+      margin-bottom: 36px;
+      letter-spacing: -0.02em;
+    }
+
+    h1 em {
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* ── Sections ── */
+    .section {
+      margin-bottom: 64px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    p {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    p strong {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    p:last-child { margin-bottom: 0; }
+
+    /* ── Pull quote ── */
+    .pull-quote {
+      border-left: 2px solid var(--accent-dim);
+      padding: 20px 28px;
+      margin: 40px 0;
+      background: rgba(74, 127, 165, 0.04);
+    }
+
+    .pull-quote p {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 20px;
+      font-style: italic;
+      color: var(--text-primary);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ── What we're looking for ── */
+    .criteria-list {
+      list-style: none;
+      margin-top: 4px;
+    }
+
+    .criteria-list li {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .criteria-list li:last-child { border-bottom: none; }
+
+    .criteria-list li::before {
+      content: '—';
+      color: var(--accent);
+      font-size: 13px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .criteria-list li strong {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, transparent, var(--border), transparent);
+      margin: 0 auto 64px;
+    }
+
+    /* ── CTA ── */
+    .cta-block {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 40px 40px 36px;
+      text-align: center;
+    }
+
+    .cta-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .cta-block h2 {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .cta-block p {
+      font-size: 14px;
+      max-width: 440px;
+      margin: 0 auto 28px;
+    }
+
+    .cta-email {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 14px 32px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .cta-email:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(74, 127, 165, 0.05);
+    }
+
+    .cta-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 16px !important;
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-copy {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .footer-location {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 20px 24px; }
+      footer { padding: 20px 24px; flex-direction: column; align-items: flex-start; }
+      .cta-block { padding: 32px 24px; }
+      h1 { margin-bottom: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="announcement-banner">
+    ⚡ Experience the LexSort intake & triage pipeline in real time. <a href="/demo">Try the Interactive Live Demo &rarr;</a>
+  </div>
+
+  <header>
+    <a href="/" class="logo" aria-label="LexSort Home">
+      <div class="logo-mark" aria-hidden="true"></div>
+      <span class="logo-name">LexSort</span>
+    </a>
+    <nav>
+      <a href="/legal" class="nav-link">Legal</a>
+      <a href="/core" class="nav-link">Core</a>
+      <a href="/demo" class="nav-link">Live Demo</a>
+      <a href="/partner.html" class="nav-link" style="color: var(--gold);">Partner</a>
+      <a href="mailto:william@lexsort.com" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <p class="eyebrow">Co-Founder &amp; Partner Inquiry</p>
+
+    <h1>The architecture is ready.<br><em>The market is arriving.</em></h1>
+
+    <!-- Section 1: The Thesis -->
+    <div class="section">
+      <p class="section-label">The Thesis</p>
+
+      <p>
+        Law firms handle the most sensitive communications in the country — criminal defence, corporate M&amp;A, wrongful conviction appeals.
+        The idea that this data should live on a vendor's cloud server, accessible to engineers in another jurisdiction, was always a temporary compromise. The legal industry knows it. They just didn't have a better option.
+      </p>
+
+      <p>
+        <strong>LexSort was built to be that option.</strong> It runs entirely on the firm's own hardware. Every document, every communication, every matter — processed and organized locally, with no data leaving the building. No API calls to third-party models. No vendor access. No exposure.
+      </p>
+
+      <div class="pull-quote">
+        <p>"The software is built for the future. We're waiting for the hardware to catch up — and that wait is measured in months, not decades."</p>
+      </div>
+
+      <p>
+        On-device inference is advancing faster than most people realize. Apple Silicon, NVIDIA edge hardware, and enterprise-grade local compute are eliminating the performance gap that once made cloud AI necessary.
+        LexSort's architecture — built local-first from day one — becomes more powerful with every hardware cycle.
+        Competitors who built on cloud APIs will have to rebuild from scratch to get here. We're already here.
+      </p>
+    </div>
+
+    <!-- Section 2: Where We Are -->
+    <div class="section">
+      <p class="section-label">Where We Are</p>
+
+      <p>
+        LexSort is in <strong>private pilot</strong> with a select group of Ontario criminal defence firms.
+        The core engine — matter intelligence, document routing, communication matching — is functional and running in production environments.
+        We are pre-revenue, pre-seed, and in the process of incorporating as an independent entity.
+      </p>
+
+      <p>
+        This is the stage where the right partner changes everything. Not an advisor. Not a consultant.
+        Someone who wants to be in the room when this is decided.
+      </p>
+    </div>
+
+    <!-- Section 3: Who We're Looking For -->
+    <div class="section">
+      <p class="section-label">Who We're Looking For</p>
+
+      <p>You've done this before — not necessarily in legal tech, but in selling complex software to professional services, building enterprise relationships, or scaling a team from single digits to something real. Specifically:</p>
+
+      <ul class="criteria-list">
+        <li>
+          <strong>Legal tech or enterprise software operator</strong> — You've sold to law firms, accountancies, healthcare systems, or similarly regulated environments. You understand the buying cycle, the compliance questions, and the trust required.
+        </li>
+        <li>
+          <strong>Former managing partner or general counsel</strong> — You know what firms actually need, what they'll pay for, and who makes the decision. You have relationships we can't manufacture.
+        </li>
+        <li>
+          <strong>Technologist who sees around corners</strong> — You understood that cloud wasn't the permanent answer. You see where local AI and on-device compute are going, and you want to be early.
+        </li>
+        <li>
+          <strong>Operator, not just investor</strong> — This isn't an advisory conversation. We're looking for a co-founder who wants to build — someone who brings domain weight, not just capital.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 4: What We're Offering -->
+    <div class="section">
+      <p class="section-label">The Offer</p>
+
+      <p>
+        <strong>Meaningful co-founder equity.</strong> We're at the stage where the right person gets a real stake in what this becomes — not an advisor grant, not a token percentage.
+        The structure and terms will be discussed directly. We're not in a rush and we're not taking the first call.
+      </p>
+
+      <p>
+        If you've built something, sold something, or led something in a space adjacent to this — and you're at a point in your career where you want one more swing that matters — this is worth a conversation.
+      </p>
+    </div>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <!-- CTA -->
+    <div class="cta-block">
+      <p class="cta-label">Get In Touch</p>
+      <h2>If this resonates, write to me directly.</h2>
+      <p>
+        No pitch deck required. Tell me who you are, where you've been, and why this is interesting to you.
+        A short email is better than a long one.
+      </p>
+      <a href="mailto:william@lexsort.com?subject=Co-Founder%20Inquiry%20—%20LexSort" class="cta-email" id="partner-cta-email">
+        william@lexsort.com
+      </a>
+      <p class="cta-note">All inquiries are reviewed personally. No recruiters or agencies, please.</p>
+    </div>
+
+  </main>
+
+  <footer>
+    <span class="footer-copy">LexSort Inc. &nbsp;&middot;&nbsp; Minesing, Ontario &nbsp;&middot;&nbsp; © 2026</span>
+    <span class="footer-location"><a href="mailto:william@lexsort.com" style="color: var(--text-muted); text-decoration: none;">william@lexsort.com</a></span>
+  </footer>
+
+</body>
+</html>
