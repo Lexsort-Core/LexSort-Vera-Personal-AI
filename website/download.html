@@ -359,10 +359,11 @@
       </a>
       <div id="alt-download-links"></div>
       <div class="meta-row">
-        <span>v1.0.0</span>
+        <span>v1.0.1</span>
         <span>Free forever</span>
         <span>Apache 2.0</span>
         <span>Requires Ollama</span>
+        <span id="download-counter-span" style="display: none;"><span id="download-counter">...</span> downloads</span>
       </div>
     </div>
 
@@ -474,6 +475,24 @@
     window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
     document.getElementById('email-sent').style.display = 'block';
   }
+
+  // Fetch download count stats
+  async function fetchDownloadCount() {
+    try {
+      const response = await fetch('/.netlify/functions/get-download-count');
+      if (!response.ok) throw new Error('Failed to fetch');
+      const data = await response.json();
+      const counterSpan = document.getElementById('download-counter-span');
+      const counterVal = document.getElementById('download-counter');
+      if (counterSpan && counterVal && data.total_downloads > 0) {
+        counterVal.textContent = data.total_downloads.toLocaleString();
+        counterSpan.style.display = 'inline';
+      }
+    } catch (error) {
+      console.warn('Failed to load download stats:', error.message);
+    }
+  }
+  fetchDownloadCount();
   </script>
 
 </body>
