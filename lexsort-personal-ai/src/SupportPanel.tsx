@@ -17,7 +17,7 @@ import "./SupportPanel.css";
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 const DISCORD_URL    = "https://discord.gg/kpZ3hWyAaq";
-const REDDIT_URL     = "https://www.reddit.com/user/LexSort/";
+const REDDIT_URL     = "https://www.reddit.com/r/LexSort/";
 const GITHUB_URL     = "https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/issues/new";
 const FEEDBACK_ENDPOINT = "https://lexsort.com/api/feedback"; // Netlify function
 

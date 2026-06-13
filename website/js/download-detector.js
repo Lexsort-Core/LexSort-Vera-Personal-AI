@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ── GitHub Release Base URL ──────────────────────────────────────────────
   // Update version string here when a new release ships
-  const VERSION = "v1.0.1";
+  const VERSION = "v1.0.2";
   const GITHUB_BASE = `https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases/download/${VERSION}`;
   const RELEASES_PAGE = "https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases/latest";
 
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const ASSETS = {
     mac_arm:   `LexSort.Personal.AI_${VERSION.slice(1)}_aarch64.dmg`,
     mac_intel: `LexSort.Personal.AI_${VERSION.slice(1)}_x64.dmg`,
-    windows:   `LexSort.Personal.AI_${VERSION.slice(1)}_x64-setup.exe`,
+    windows:   `LexSort.Personal.AI_${VERSION.slice(1)}_x64_en-US.msi`,
     linux_deb: `LexSort.Personal.AI_${VERSION.slice(1)}_amd64.deb`,
     linux_app: `LexSort.Personal.AI_${VERSION.slice(1)}_amd64.AppImage`,
   };
