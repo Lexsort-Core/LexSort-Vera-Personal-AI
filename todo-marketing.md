@@ -15,7 +15,7 @@ To market the LexSort Personal AI (VERA) and build a sovereign community, our st
 | Download page live at lexsort.com/download.html (all platforms listed) | ✅ Done |
 | VERA card added to corporate LexSort homepage | ✅ Done |
 | GitHub repository public: Lexsort-Core/LexSort-Vera-Personal-AI | ✅ Done |
-| CI/CD pipeline active: macOS (arm64 + x86_64), Windows, Linux | ✅ Building |
+| CI/CD pipeline active: macOS (arm64 + x86_64), Windows, Linux | ✅ Active & Tested |
 | Discord, Reddit, X, YouTube, LinkedIn, TikTok, Instagram, Product Hunt linked | ✅ Done |
 
 ---
@@ -58,9 +58,9 @@ The freeware sub-page ([website/freeware.html](freeware.html)) is already deploy
 
 - [ ] **Cross-Promotion Setup**
   - Update the bio and links on the official X profile [@LexSortAI](https://x.com/LexSortAI) to point to the Freeware Foundation landing page.
-- [ ] **GitHub-First Growth Funnel** *(CI/CD active — binaries available once build completes)*
-  - Confirm Windows and Linux binaries appear on [GitHub Releases](https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases).
-  - Update download.html platform links when all binaries are confirmed.
+- [x] **GitHub-First Growth Funnel** *(CI/CD active — binaries available once build completes)*
+  - [x] Confirm Windows and Linux binaries appear on [GitHub Releases](https://github.com/Lexsort-Core/LexSort-Vera-Personal-AI/releases).
+  - [x] Update download.html platform links when all binaries are confirmed.
 - [ ] **Product Hunt Launch Post**
   - Schedule a proper Product Hunt launch for VERA (aim for a Tuesday/Wednesday for max exposure).
 - [ ] **Community Recruiting Campaign**
