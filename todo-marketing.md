@@ -67,6 +67,9 @@ The freeware sub-page ([website/freeware.html](freeware.html)) is already deploy
   - Post threads in r/LexSort and the Discord server asking for feedback on the "Auto Emailer" and "Guardian Watch" roadmap features.
 - [ ] **First YouTube Video / Demo**
   - Record a screen-capture demo of VERA booting, detecting hardware, and pulling a local model — zero cloud, zero account.
+- [ ] **Sovereign Social Announcement Pipeline (Future)**
+  - Deploy the `lexsort-approval-bot` to **Railway.app** to handle automated Discord #announcements and approval-gated posts to r/LexSort using GitHub release webhook triggers.
+  - Wire up Node.js webhook calls in both Freeware and Pro `.github/workflows/release.yml` once bot credentials (`DISCORD_TOKEN`, `REDDIT_CLIENT_ID`, etc.) are ready.
 
 ---
 
